@@ -1,0 +1,37 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index()
+POST    /login                       controllers.Application.authenticate()
+POST    /register                   controllers.Application.register()
+GET     /dashboard                  controllers.Dashboard.contacts()
+GET     /logout                     controllers.Application.logout()
+GET     /login                      controllers.Application.login()
+GET     /profile                    controllers.Profile.editProfile()
+POST    /profile	                controllers.Profile.updateProfile()
+GET     /addContact                 controllers.Requests.addContact()
+POST    /addContact	                controllers.Requests.requestContact()
+POST    /uploadContact	                controllers.Requests.uploadContact()
+GET		/myRequests					controllers.Requests.myRequests()
+POST	/accept:ph					controllers.Requests.acceptRequest(ph:String)
+POST	/reject:ph					controllers.Requests.rejectRequest(ph:String)
+GET		/settings					controllers.Profile.getSettings()
+POST	/settings					controllers.Profile.updateSettings()
+POST	/forgotPassword				controllers.Application.recoverPassword()
+GET		/forgotPassword				controllers.Application.forgotPassword()
+GET		/company					controllers.Application.company()
+GET     /assets/images/uploads/:file_name        controllers.ServeImage.at(file_name)
+GET		/privacy					controllers.Application.privacy()
+GET		/terms						controllers.Application.terms()
+GET		/feedback					controllers.Profile.feedback()
+POST	/feedback					controllers.Profile.sendFeedback()
+GET     /getImage                   controllers.Profile.getImage(id: Long)
+POST	/delete						controllers.Profile.deleteProfile()
+POST	/export:ph					controllers.Dashboard.exportVCF(ph:String)
+POST	/email/:ph/:email				controllers.Requests.emailContact(ph:String, email:String)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /sitemap.xml    			controllers.Assets.at(path="/public", file = "sitemap.xml")

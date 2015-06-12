@@ -1,0 +1,317 @@
+@(userList : List[User])
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Virtual Business Cards">
+        <meta name="keywords" content="Business Cards, Virtual Business Cards, Online Business Cards, Business Cards in cloud	">
+        <meta name="author" content="Prashant Yadav">
+        <link rel="icon" href="@routes.Assets.at("images/favicon.ico")">
+
+        <title>KinCards</title>
+
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+        <meta name="viewport" content="width=device-width" />
+
+        <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" />
+        <link href="@routes.Assets.at("stylesheets/gsdk-base.css")" rel="stylesheet" />
+        <link href="@routes.Assets.at("stylesheets/rotating-card.css")" rel='stylesheet' />
+        <link href="@routes.Assets.at("stylesheets/pe-icon-7-stroke.css")" rel="stylesheet" />
+		<link href="@routes.Assets.at("stylesheets/ct-navbar.css")" rel="stylesheet" /> 
+		<link href="@routes.Assets.at("stylesheets/bootstrap-tour.min.css")" rel="stylesheet"> 
+
+        <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+    </head>
+
+    <body>
+    <div id="navbar-full">
+	    <div id="navbar">
+	       <!--    
+	        navbar-default can be changed with navbar-ct-blue navbar-ct-azzure navbar-ct-red navbar-ct-green navbar-ct-orange  
+	        -->
+	        <nav class="navbar navbar-ct-orange navbar-fixed-top" role="navigation">
+	          
+	          <div class="container">
+	            <!-- Brand and toggle get grouped for better mobile display -->
+	            <div class="navbar-header">
+	              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	                <span class="sr-only">Toggle navigation</span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+	              </button>
+					<div class="logo"><a href="@routes.Application.index()">
+						<img alt="logo" src="@routes.Assets.at("images/Klogo.png")">
+						</a>
+					</div>
+	            </div>
+	            <!-- Collect the nav links, forms, and other content for toggling -->
+	            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	              <ul class="nav navbar-nav navbar-right">
+<!-- 	                    <li> -->
+<!-- 	                        <a href="javascript:void(0);" data-toggle="search" class="hidden-xs"> -->
+<!-- 	                            <i class="pe-7s-search"></i> -->
+<!-- 	                            <p>Search</p> -->
+<!-- 	                        </a> -->
+<!-- 	                    </li> -->
+                      <li>
+                          <a href="@routes.Requests.addContact()">
+                              <i class="pe-7s-add-user">
+                              </i>
+                              <p id="addCont">Add Contact</p>
+                          </a>
+                      </li>
+	                    <li>
+	                        <a href="@routes.Requests.myRequests()">
+	                            <i class="pe-7s-mail">
+	                            </i>
+	                            <p id="my-req">Requests</p>
+	                        </a>
+	                    </li> 
+	                    <li class="dropdown">
+	                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                                <i class="pe-7s-user"></i>
+	                                <p>Account</p>
+	                            </a>
+	                          <ul class="dropdown-menu">
+	                            <li><a href="@routes.Profile.editProfile()">Profile</a></li>
+	                            <li><a href="@routes.Profile.getSettings()">Settings</a></li>
+	                            <li><a href="@routes.Application.logout()">Sign Out</a></li>
+	                          </ul>
+	                    </li>
+	               </ul>
+	               <form class="navbar-form navbar-right navbar-search-form" role="search">                  
+	                 <div class="form-group">
+	                      <input type="text" value="" class="form-control" placeholder="Search...">
+	                 </div> 
+	              </form>
+	              
+	            </div><!-- /.navbar-collapse -->
+	          </div><!-- /.container-fluid -->
+	        </nav>
+	    </div><!--  end navbar -->
+	
+	</div> <!-- end menu-dropdown -->
+	
+        <div class="main">
+
+                <!--   Big container   -->
+            <div class="container">
+                <div class="row">
+                    <h1 class="title">
+                        My Contacts
+                        <br>
+                        <small>Presenting your contacts in an interesting way!</small>
+                        <a href=""></a>
+                    </h1>
+                    <div class="col-sm-10 col-sm-offset-1" id="cont">
+					@if(userList.size() > 0){
+	                	@for(user <- userList){
+                        <div class="col-md-4 col-sm-6">
+                            <div class="card-container">
+                                <div class="card card-user" id="cards">
+                                    <div class="front">
+                                        <div class="cover">
+                                            <img src="@routes.Assets.at("images/rotating_card_thumb2.png")"/>
+                                        </div>
+                                        <div class="user">
+                                            @if(user.photoId > 0){
+                                                <img src="@routes.Profile.getImage(user.photoId)" class="picture-src" id="wizardPicturePreview" title=""/>
+                                            }else{
+                                            	<img src="@routes.Assets.at("images/default-avatar.png")" class="picture-src" id="wizardPicturePreview" title=""/>
+                                            }
+                                        </div>
+                                        <div class="content text-center">
+                                            <div class="main">
+                                                <h3 class="name">@user.fName @user.lName</h3>
+                                                <p class="profession">@user.designation</p>
+                                                @if(user.phone != ""){
+                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone</h5>
+                                                }@if(user.email != ""){
+                                                	<h5><i class="fa fa-envelope-o fa-fw text-muted"></i> @user.email</h5>
+                                                }@if(user.website != ""){
+                                                	<h5><i class="fa fa-globe fa-fw text-muted"></i>@user.website</h5>
+                                                }
+                                            </div>
+                                            <div class="footer">
+
+                                            </div>
+                                        </div>
+                                    </div> <!-- end front panel -->
+                                    <div class="back">
+                                        <div class="header">
+                                        	<div style="float:right; margin-left:2px;">
+	                                        	<a href="" onclick="javascript: emailContact(@user.phone)"><i class="fa fa-inbox"></i></a>
+	                                            <a href="" onclick="javascript: exportVCF(@user.phone)"><i class="fa fa-download"></i></a>
+	                                        </div>
+                                        </div>
+                                        <div class="content">
+                                            <div class="main">
+                                            @if(user.companyLogoId > 0){
+                                                <img src="@routes.Profile.getImage(user.companyLogoId)"  style="width: 80px; height: 80px; margin-left: 32%;" class="picture-src" id="wizardPicturePreview" title=""/>
+                                            }else{
+                                            	<img src="@routes.Assets.at("images/company-logo.png")" style="width: 80px; height: 80px; margin-left: 32%;" class="picture-src" id="wizardPicturePreview" title=""/>
+                                            }
+                                                <h4 class="text-center">@user.companyName</h4>
+                                                <br/>
+                                                <p style="text-align: center;">@user.addressLn1 @user.addressLn2</p>
+                                                <p style="text-align: center;">@user.city @user.state @if(user.zip >0){@user.zip}</p>
+                                            </div>
+                                        </div>
+                                        <div class="footer">
+                                            <div class="social-links text-center">
+                                                <a href="@user.facebook" class="facebook" target="_blank"><i class="fa fa-facebook fa-fw"></i></a>
+                                                <a href="@user.linkedIn" class="linkedin" target="_blank"><i class="fa fa-linkedin fa-fw"></i></a>
+                                                <a href="@user.twitter" class="twitter" target="_blank"><i class="fa fa-twitter fa-fw"></i></a>
+                                            </div>
+                                        </div>
+                                    </div> <!-- end back panel -->
+                                </div> <!-- end card -->
+                            </div> <!-- end card-container -->
+                        </div> <!-- end col sm 3 -->
+                        }
+                       }else{
+                       		<h1><small class="subtitle">You have No connections, yet. But don't get disheartened... Add your contacts <a href="@routes.Requests.addContact()">here.</a></small></h1>
+                       }
+
+                    </div> <!-- end col-sm-10 -->
+                </div> <!-- end row -->
+                <div class="space-200"></div>
+            </div>
+            </div> <!--  big container -->
+
+            
+	        <footer class="footer footer-black">
+	            <div class="container">
+	                <nav class="pull-left">
+	                    <ul>
+	                        <li>
+	                            <a href="http://www.kincards.com/dashboard">
+	                                Home
+	                            </a>
+	                        </li>
+	                        <li>
+	                            <a href="@routes.Application.company()">
+	                                Company
+	                            </a>
+	                        </li>
+	                        <li>
+	                            <a href="http://kincards.tumblr.com" target="_blank">
+	                               Blog
+	                            </a>
+	                        </li>
+	                        <li>
+	                            <a href="@routes.Profile.feedback()">
+	                               Feedback
+	                            </a>
+	                        </li>
+	                    </ul>
+	                </nav>
+					<div class="social-area pull-right"> 
+						<a href="http://kincards.tumblr.com/" target="_blank">
+	                        <i class="fa fa-tumblr-square"></i>
+	                    </a>               
+	                    <a href="https://www.facebook.com/pages/KinCards/1402887083373167" target="_blank">
+	                        <i class="fa fa-facebook-square"></i>
+	                    </a>
+	                    <a href="https://twitter.com/KinCards" target="_blank">
+	                        <i class="fa fa-twitter"></i>
+	                    </a>
+<!-- 	                    <a href="#"> -->
+<!-- 	                        <i class="fa fa-linkedin"></i> -->
+<!-- 	                    </a> -->
+	                </div>
+	                <div class="copyright">
+	                    &copy; 2015 KinCards
+	                </div>
+	            </div>
+	        </footer>
+        </div>
+    </body>
+
+
+    <script src="@routes.Assets.at("javascripts/jquery-1.10.2.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+
+        <!--   plugins 	 -->
+    <script src="@routes.Assets.at("javascripts/jquery.bootstrap.wizard.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/wizard.js")"></script>
+    <script src="@routes.Assets.at("javascripts/ct-navbar.js")"></script>
+    <script src="@routes.Assets.at("javascripts/bootstrap-tour.min.js")"></script>
+
+    <script type="text/javascript">
+	
+        $().ready(function(){
+            $('[rel="tooltip"]').tooltip();
+        });
+
+        function rotateCard(btn){
+            var $card = $(btn).closest('.card-container');
+            console.log($card);
+            if($card.hasClass('hover')){
+                $card.removeClass('hover');
+            } else {
+                $card.addClass('hover');
+            }
+        }
+        function exportVCF(ph){
+        	var action = "@routes.Dashboard.exportVCF("")"+ph;
+        	$.post( action, function(data) {
+        		window.open(data);
+        		document.location = 'data:Application/octet-stream,' +
+                encodeURIComponent(data);
+            });
+        }
+        
+        function emailContact(ph){
+        	var email = prompt("Please enter the email address to send KinCard to:", "");
+        	var action = "/email/"+ph+"/"+email;
+        	$.post( action, function(data) {
+        		console.log(data);
+            });
+        }
+        
+    </script>
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	
+	  ga('create', 'UA-63690567-1', 'auto');
+	  ga('send', 'pageview');
+	
+	</script>
+	<script>
+
+	// Instance the tour
+	var tour = new Tour({
+	  steps: [
+	  {
+	    element: "#addCont",
+	    title: "Add Contact",
+	    content: "You can send a request to add contact here."
+	  },
+	  {
+	    element: "#my-req",
+	    title: "My requests",
+	    content: "You could check your pending Requests here."
+	  },
+	  {
+	    element: "#cards",
+	    title: "Contact Cards",
+	    content: "These are your contact KinCards. Hover over the card to see more details."
+	  }
+	]});
+	 // Initialize the tour
+	tour.init();
+
+	// Start the tour
+	tour.start();
+	</script>
+
+</html>

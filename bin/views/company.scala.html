@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Virtual Business Cards">
+        <meta name="keywords" content="Business Cards, Virtual Business Cards, Online Business Cards, Business Cards in cloud	">
+        <meta name="author" content="Prashant Yadav">
+        <link rel="icon" href="@routes.Assets.at("images/favicon.ico")">
+
+        <title>KinCards</title>
+
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+        <meta name="viewport" content="width=device-width" />
+
+        <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" rel="stylesheet" />
+        <link href="@routes.Assets.at("stylesheets/gsdk-base.css")" rel="stylesheet" />
+        <link href="@routes.Assets.at("stylesheets/pe-icon-7-stroke.css")" rel="stylesheet" />
+		<link href="@routes.Assets.at("stylesheets/ct-navbar.css")" rel="stylesheet" />  
+
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+
+    </head>
+
+    <body>
+    	<div id="navbar-full">
+		    <div id="navbar">
+		        <nav class="navbar navbar-ct-orange navbar-fixed-top" role="navigation">
+		          
+		          <div class="container">
+		            <!-- Brand and toggle get grouped for better mobile display -->
+		            <div class="navbar-header">
+		              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+		                <span class="sr-only">Toggle navigation</span>
+		                <span class="icon-bar"></span>
+		                <span class="icon-bar"></span>
+		                <span class="icon-bar"></span>
+		              </button>
+						<div class="logo"><a href="@routes.Application.index()">
+							<img alt="logo" src="@routes.Assets.at("images/Klogo.png")">
+							</a>
+						</div>
+		            </div>
+		          </div><!-- /.container-fluid -->
+		        </nav>
+		    </div><!--  end navbar -->
+		
+		</div> <!-- end menu-dropdown -->
+        <div class="image-container set-full-height" style="background-image: url('./assets/images/wizard.jpg')">
+
+                <!--   Big container   -->
+            <div class="container">
+                <div class="row">
+					<div class="wizard-container">
+                           <form action="@routes.Application.recoverPassword()" method="post" name="profileForm">
+                               <div class="card wizard-card ct-wizard-orange" id="wizard">
+                                   <div class="wizard-header">
+                                       <h3>
+                                           <b>About</b><br>
+                                       </h3>
+                                   </div>
+                                   <ul>
+                                       <li><a href="#about" data-toggle="tab"></a></li>
+                                   </ul>
+                                   <div class="tab-content">
+                                       <div class="tab-pane" id="about">
+                                           <div class="row">
+                                               <div class="col-sm-2"></div>
+                                               
+                                               <div class="col-sm-8">
+                                               	<p>Welcome to KinCards. The KinCards app is the 21st century rolodex, created with the goal to eliminate the need to carry business cards. Change the way you exchange information across all platforms.</p>
+                                               	<h2>About This Project</h2>
+                                               <p>KinCards was created with one goal in mind: To eliminate the need to carry business cards with you. We often forget to carry our cards, or run out of them when we need them the most.</p>
+                                               <p>How many times have you said, “I’m sorry, I don’t have my business cards with me.” or “I’m sorry, I ran out of my business cards.”</p>
+                                               <p>KinCards will allow you to share your contact details, as well as gain access to your other KinCards just by flipping through your stored cards.</p>
+                                               <h2>What it Does?</h2>
+                                               <p>KinCards lets you create and personalize your own virtual business card, and share your contact information immediately with your phone number or email. Connections can easily exchange, collect and store KinCards. The stored cards are saved to your KinCard app and easily accessed at any time. The app then acts as your own personal rolodex, complete with photo, phone numbers, social media sites, website, address and business information.</p>
+                                               <p>Your contact information is never shared publicly, and you’ll never lose anyone's contact information again.</p>
+                                               <h2>Ease of Use</h2>
+                                               <p>Create and maintain your connections in a safe, new way! Sending a virtual card is what we’re all used to, however, have you ever tried to send your info from an iPhone to say, an Android tablet? Various phones and OS receive and transmit information differently. With the KinCards app, you will never have an issue sharing information across various phones and devices because it shares contacts via phone number, text, email, the KinCards platform or direct download. KinCards stores all of your contacts on your phone and on Cloud, which allows you to have a seamless experience with various devices, including desktops, laptops and tablets.</p>
+                                               <h4>The best part is: if you lose your phone or change your device, you won’t lose any of your contacts!</h4>
+                                               <p>Tell everyone about KinCards</p>
+                                               <a href="https://www.facebook.com/sharer/sharer.php?u=http://www.kincards.com/" target="_blank"><i class="fa fa-facebook fa-2x"></i></a>
+                                               <a href="https://twitter.com/home?status=Hey%20There!%0AI%20would%20like%20to%20recommend%20KinCards%20to%20you.%20Its%20a%20great%20new%20app%20to%20share%20contacts.%20http://www.kincards.com/" target="_blank"><i class="fa fa-twitter fa-2x"></i></a>
+                                               <a href="https://plus.google.com/share?url=http://www.kincards.com/" target="_blank"><i class="fa fa-google-plus fa-2x"></i></a>
+                                               <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://www.kincards.com/&title=KinCards&summary=Share%20contacts%20differently!&source=" target="_blank"><i class="fa fa-linkedin fa-2x"></i></a>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                                   <div class="wizard-footer">
+                                       <div class="clearfix"></div>
+                                   </div>
+                               </div>
+                           </form>
+                       </div>
+                </div><!-- end row -->
+            </div> <!--  big container -->
+
+
+            <footer class="footer footer-black">
+	            <div class="container">
+	                <nav class="pull-left">
+	                    <ul>
+	                        <li>
+	                            <a href="http://www.kincards.com/dashboard">
+	                                Home
+	                            </a>
+	                        </li>
+							<li>
+	                            <a href="@routes.Application.company()">
+	                                Company
+	                            </a>
+	                        </li>
+	                        <li>
+	                            <a href="http://kincards.tumblr.com" target="_blank">
+	                               Blog
+	                            </a>
+	                        </li>
+	                        <li>
+	                            <a href="@routes.Profile.feedback()">
+	                               Feedback
+	                            </a>
+	                        </li>
+	                    </ul>
+	                </nav>
+	                <div class="social-area pull-right"> 
+	                	<a href="http://kincards.tumblr.com/" target="_blank">
+	                        <i class="fa fa-tumblr-square"></i>
+	                    </a>               
+	                    <a href="https://www.facebook.com/pages/KinCards/1402887083373167" target="_blank">
+	                        <i class="fa fa-facebook-square"></i>
+	                    </a>
+	                    <a href="https://twitter.com/KinCards" target="_blank">
+	                        <i class="fa fa-twitter"></i>
+	                    </a>
+<!-- 	                    <a href="#"> -->
+<!-- 	                        <i class="fa fa-linkedin"></i> -->
+<!-- 	                    </a> -->
+	                </div>
+	                <div class="copyright">
+	                    &copy; 2015 KinCards
+	                </div>
+	            </div>
+	        </footer>
+        </div>
+
+    </body>
+
+    <script src="@routes.Assets.at("javascripts/jquery-1.10.2.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+
+        <!--   plugins 	 -->
+    <script src="@routes.Assets.at("javascripts/jquery.bootstrap.wizard.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/wizard.js")"></script>
+    <script src="@routes.Assets.at("javascripts/ct-navbar.js")"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	
+	  ga('create', 'UA-63690567-1', 'auto');
+	  ga('send', 'pageview');
+	
+	</script>
+</html>
