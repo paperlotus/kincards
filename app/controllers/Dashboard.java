@@ -7,13 +7,11 @@ import play.data.Form;
 import views.html.*;
 import models.*;
 import helper.CreateSimpleGraph;
-import helper.EmailHelper;
 import helper.VCFHelper;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,15 +19,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
-import ezvcard.Ezvcard;
-import ezvcard.VCard;
-import ezvcard.VCardVersion;
-import ezvcard.io.text.VCardWriter;
-import ezvcard.parameter.TelephoneType;
-import ezvcard.property.Address;
-import ezvcard.property.Kind;
-import ezvcard.property.StructuredName;
 
 /**
  * Created by secret on 5/19/15.
@@ -55,6 +44,7 @@ public class Dashboard extends Controller{
             	User user = new User();
             	JsonNode node  = it.next();
             	user.phone = node.get("row").findPath("phone").asText();
+            	user.phone2 = node.get("row").findPath("phone2").asText();
             	user.addressLn1 = node.get("row").findPath("addressLn1").asText();
             	user.addressLn2 = node.get("row").findPath("addressLn2").asText();
             	user.city = node.get("row").findPath("city").asText();

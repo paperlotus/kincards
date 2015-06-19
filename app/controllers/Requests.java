@@ -9,26 +9,14 @@ import views.html.*;
 import models.*;
 import helper.CreateSimpleGraph;
 import helper.EmailHelper;
-import helper.Neo4jClient;
 import helper.VCFHelper;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.MediaType;
-
-import org.neo4j.rest.graphdb.RestAPI;
-import org.neo4j.rest.graphdb.RestAPIFacade;
-import org.neo4j.rest.graphdb.query.QueryEngine;
-import org.neo4j.rest.graphdb.query.RestCypherQueryEngine;
-import org.neo4j.rest.graphdb.util.QueryResult;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,9 +25,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
@@ -57,7 +42,6 @@ public class Requests extends Controller {
     	String phone = requestData.get("phone");
     	String email = requestData.get("email");
     	String userPhone = session().get("phone");
-    	User bob = new User();
     	String query = "";
     	String resp = "";
     	PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
@@ -131,9 +115,7 @@ public class Requests extends Controller {
     }
     
     public static Result uploadContact() throws URISyntaxException{
-    	boolean upload = false;
-    	upload  = uploadVCF();
-
+    	uploadVCF();
         return ok(contact.render());
     }
     
@@ -254,8 +236,6 @@ public class Requests extends Controller {
         
         query = "MATCH (a:Account), (b:Account) WHERE a.phone = \'"+phone+"\' and b.phone = \'"+userPhone+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
         resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
-
-        List<User> userList = new ArrayList<User>();
         
         try {
 			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
@@ -288,9 +268,7 @@ public static Result rejectRequest(String phone){
 	String userPhone = session().get("phone");
 	String query = "MATCH (in { phone:\'"+phone+"\' })-[r:KNOWS]-({phone:\'"+userPhone+"\'}) DELETE r;";
     String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
-    
-    List<User> userList = new ArrayList<User>();
-    
+        
     try {
 		JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
 		ArrayNode results = (ArrayNode)json;
@@ -324,5 +302,64 @@ public static Result rejectRequest(String phone){
 		EmailHelper.sendEmailWithAttachment(email, subject, body, fileName);
 		return ok("Email Sent");
 	}
-
+	
+	public static Result shareContact(String phone, String email){
+		phone = "+"+phone;
+		String query = "MATCH (a:Account), (b:Account) WHERE a.phone = \'"+phone+"\' and (b.email = \'"+email+"\' or b.phone = \'"+email+"\') CREATE (a)-[r:KNOWS]->(b) return b.email, a.email;";
+		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+		try{
+			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+			ArrayNode results = (ArrayNode)json;
+			Iterator<JsonNode> it = results.iterator();
+			
+            while (it.hasNext()) {
+            	JsonNode node  = it.next();
+				
+				String email1 = node.get("row").get(0).asText();
+				String email2 = node.get("row").get(1).asText();
+				String subject = session().get("phone")+" would like to see you connected.";
+				String body = "Connection request has been sent. Please take necessary action.";
+				EmailHelper.sendEmail(email1, subject, body);
+				body = "Connection request has been sent. You don't have to do anything at this moment.";
+				EmailHelper.sendEmail(email2, subject, body);
+				return ok("Email Sent");
+            }
+		}
+		catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ok();
+	}
+	
+	public static Result mergeContacts(){
+		DynamicForm requestData = Form.form().bindFromRequest();
+    	String phone = requestData.get("phone");
+    	String pin = requestData.get("pin");
+    	String query = "MATCH (a)-[r:CONNECTED]-(b) WHERE a.phone = \'"+phone+"\' AND a.pin="+pin+" RETURN b.phone";
+		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+		try{
+			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+			ArrayNode results = (ArrayNode)json;
+			Iterator<JsonNode> it = results.iterator();
+			
+            while (it.hasNext()) {
+            	JsonNode node  = it.next();
+				String destPhone = node.get("row").get(0).asText();				
+				query = "MATCH (a:Account), (b:Account) WHERE a.phone = \'"+phone+"\' and b.phone = \'"+destPhone+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
+		        resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);	
+            }
+		}
+		catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ok(contact.render());
+	}
 }

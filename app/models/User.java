@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 public class User extends Model {
 
     public String phone;
+    public String phone2;
     public Integer pin;
     public String email;
     public String fName;
@@ -53,6 +54,7 @@ public class User extends Model {
             	JsonNode node  = it.next();
             	
             	user.phone = node.get("row").findPath("phone").asText();
+            	user.phone2 = node.get("row").findPath("phone2").asText();
                 user.pin = node.get("row").findPath("pin").asInt();
                 user.addressLn1 = node.get("row").findPath("addressLn1").asText();
                 user.addressLn2 = node.get("row").findPath("addressLn2").asText();
@@ -100,6 +102,7 @@ public class User extends Model {
             	JsonNode node  = it.next();
             	
             	user.phone = node.get("row").findPath("phone").asText();
+            	user.phone2 = node.get("row").findPath("phone2").asText();
                 user.pin = node.get("row").findPath("pin").asInt();
                 user.addressLn1 = node.get("row").findPath("addressLn1").asText();
                 user.addressLn2 = node.get("row").findPath("addressLn2").asText();
@@ -147,6 +150,7 @@ public class User extends Model {
             	JsonNode node  = it.next();
             	
             	user.phone = node.get("row").findPath("phone").asText();
+            	user.phone2 = node.get("row").findPath("phone2").asText();
                 user.pin = node.get("row").findPath("pin").asInt();
                 user.addressLn1 = node.get("row").findPath("addressLn1").asText();
                 user.addressLn2 = node.get("row").findPath("addressLn2").asText();

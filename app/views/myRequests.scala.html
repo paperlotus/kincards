@@ -126,15 +126,25 @@
                                             <img src="@routes.Assets.at("images/rotating_card_thumb2.png")"/>
                                         </div>
                                         <div class="user">
-                                            <img class="img-circle" src="@routes.Assets.at("images/rotating_card_profile3.png")"/>
+                                            @if(user.photoId > 0){
+                                                <img src="@routes.Profile.getImage(user.photoId)" class="picture-src" id="wizardPicturePreview" title=""/>
+                                            }else{
+                                            	<img src="@routes.Assets.at("images/default-avatar.png")" class="picture-src" id="wizardPicturePreview" title=""/>
+                                            }
                                         </div>
                                         <div class="content">
                                             <div class="main">
                                                 <h3 class="name">@user.fName @user.lName</h3>
                                                 <p class="profession">@user.designation</p>
-                                                <h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone</h5>
-                                                <h5><i class="fa fa-envelope-o fa-fw text-muted"></i> @user.email</h5>
-                                                <h5><i class="fa fa-globe fa-fw text-muted"></i>@user.website</h5>
+                                                @if(user.phone != ""){
+                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone</h5>
+                                                }@if(user.phone2 != ""){
+                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone2</h5>
+                                                }@if(user.email != ""){
+                                                	<h5><i class="fa fa-envelope-o fa-fw text-muted"></i>@user.email</h5>
+                                                }@if(user.website != ""){
+                                                	<h5><i class="fa fa-globe fa-fw text-muted"></i>@user.website</h5>
+                                                }
                                             </div>
                                             <div class="footer">
 
@@ -150,7 +160,11 @@
                                         </div>
                                         <div class="content">
                                             <div class="main">
-                                                <img src="@routes.Assets.at("images/cars.png")" style="width: 80px; height: 80px; margin-left: 32%;">
+                                                @if(user.companyLogoId > 0){
+	                                                <img src="@routes.Profile.getImage(user.companyLogoId)"  style="width: 80px; height: 80px; margin-left: 32%;" class="picture-src" id="wizardPicturePreview" title=""/>
+	                                            }else{
+	                                            	<img src="@routes.Assets.at("images/company-logo.png")" style="width: 80px; height: 80px; margin-left: 32%;" class="picture-src" id="wizardPicturePreview" title=""/>
+	                                            }
                                                 <h4 class="text-center">@user.companyName</h4>
                                                 <br/>
                                                 <p style="text-align: center;">@user.addressLn1 @user.addressLn2, @user.city, @user.state, @user.zip</p>

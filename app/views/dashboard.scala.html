@@ -131,6 +131,8 @@
                                                 <p class="profession">@user.designation</p>
                                                 @if(user.phone != ""){
                                                 	<h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone</h5>
+                                                }@if(user.phone2 != ""){
+                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone2</h5>
                                                 }@if(user.email != ""){
                                                 	<h5><i class="fa fa-envelope-o fa-fw text-muted"></i> @user.email</h5>
                                                 }@if(user.website != ""){
@@ -145,6 +147,7 @@
                                     <div class="back">
                                         <div class="header">
                                         	<div style="float:right; margin-left:2px;">
+                                        		<a href="" onclick="javascript: shareContact(@user.phone)"><i class="fa fa-share-alt"></i></a>
 	                                        	<a href="" onclick="javascript: emailContact(@user.phone)"><i class="fa fa-inbox"></i></a>
 	                                            <a href="" onclick="javascript: exportVCF(@user.phone)"><i class="fa fa-download"></i></a>
 	                                        </div>
@@ -268,8 +271,16 @@
         }
         
         function emailContact(ph){
-        	var email = prompt("Please enter the email address to send KinCard to:", "");
+        	var email = prompt("Please enter the email address to share KinCard with:", "");
         	var action = "/email/"+ph+"/"+email;
+        	$.post( action, function(data) {
+        		console.log(data);
+            });
+        }
+        
+        function shareContact(ph){
+        	var email = prompt("Please enter the email or phone to share KinCard with:", "");
+        	var action = "/share/"+ph+"/"+email;
         	$.post( action, function(data) {
         		console.log(data);
             });

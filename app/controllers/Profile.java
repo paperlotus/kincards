@@ -14,7 +14,6 @@ import helper.EmailHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,6 +47,7 @@ public class Profile extends Controller{
     	DynamicForm requestData = Form.form().bindFromRequest();
 
         String phone = session().get("phone");
+        String phone2 = requestData.get("phone2");
         String email = requestData.get("email");
         String fName = requestData.get("fName");
         String lName = requestData.get("lName");
@@ -76,28 +76,28 @@ public class Profile extends Controller{
         companyLogoId = upload("cPic");
         String query = "";
         if(photoId > 0 && companyLogoId > 0){
-	        query = "MATCH (n {phone : \'"+phone+"\'}) SET n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
+	        query = "MATCH (n {phone : \'"+phone+"\'}) SET n.phone2 = \'"+phone2+"\', n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
 	        		+ "n.photoId = \'"+photoId+"\', n.companyLogoId = \'"+companyLogoId+"\', "
 	        		+ "n.country = \'"+country+"\' RETURN n;";
         }else if(photoId > 0 && companyLogoId == 0){
-        	query = "MATCH (n {phone : \'"+phone+"\'}) SET n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
+        	query = "MATCH (n {phone : \'"+phone+"\'}) SET n.phone2 = \'"+phone2+"\', n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
 	        		+ "n.photoId = \'"+photoId+"\', "
 	        		+ "n.country = \'"+country+"\' RETURN n;";
         }else if(companyLogoId > 0 && photoId == 0){
-        	query = "MATCH (n {phone : \'"+phone+"\'}) SET n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
+        	query = "MATCH (n {phone : \'"+phone+"\'}) SET n.phone2 = \'"+phone2+"\', n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
 	        		+ " n.companyLogoId = \'"+companyLogoId+"\', "
 	        		+ "n.country = \'"+country+"\' RETURN n;";
         }else if(companyLogoId == 0 && photoId == 0){
-        	query = "MATCH (n {phone : \'"+phone+"\'}) SET n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
+        	query = "MATCH (n {phone : \'"+phone+"\'}) SET n.phone2 = \'"+phone2+"\', n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
@@ -160,7 +160,7 @@ public class Profile extends Controller{
 		String phone = session().get("phone");
 		int pin = Integer.parseInt(requestData.get("pin"));
 		String query = "MATCH (n {phone : \'"+phone+"\'}) SET n.pin = "+pin+";";
-		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+		CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		flash("pin", "Successfully updated your pin");
 		
 		return ok(settings.render());
@@ -200,7 +200,7 @@ public class Profile extends Controller{
 		String delete = requestData.get("delete");
 		if(delete.equalsIgnoreCase("DELETE")){
 			String query = "MATCH (p {phone: \'"+session().get("phone")+"\'})-[r]-() DELETE p, r;";
-			String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+			CreateSimpleGraph.sendTransactionalCypherQuery(query);
 			session().clear();
 	        flash("logout", "Damn! You have permanentaly deleted your profile.");
 	        return redirect(
