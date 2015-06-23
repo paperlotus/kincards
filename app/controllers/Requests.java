@@ -41,33 +41,22 @@ public class Requests extends Controller {
     	DynamicForm requestData = Form.form().bindFromRequest();
     	String phone = requestData.get("phone");
     	String email = requestData.get("email");
-    	String userPhone = session().get("phone");
+    	String userEmail = session().get("email");
     	String query = "";
     	String resp = "";
-    	PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-    	PhoneNumber NumberProto = null;
-        try {
-    	  NumberProto = phoneUtil.parse(phone, "US");
-    	  phone = phoneUtil.format(NumberProto, PhoneNumberFormat.E164);
-    	} catch (Exception e) {
-    		System.err.println("NumberParseException was thrown: " + e.toString());
-    	}
     	
     	if (phone != null && phone != ""){
-    		if(!phone.equalsIgnoreCase(userPhone)){
-    			boolean alreadyConnected = checkConnectionStatus(phone, userPhone);
-    			if(!alreadyConnected){
-	    			query = "MATCH (a:Account), (b:Account) WHERE a.phone = \'"+userPhone+"\' and b.phone = \'"+phone+"\' CREATE (a)-[r:KNOWS]->(b) return r;";
-	    			resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
-    			}else{
-    				flash("request-error", "You are already connected with "+phone);
-    			}
+			query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+userEmail+"\' and b.phone = \'"+phone+"\' CREATE (a)-[r:KNOWS]->(b) return r;";
+			resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+    	}else if(email != null && !email.equals("")){
+    		boolean isConnected = checkConnectionStatus(email, userEmail);
+    		if(isConnected){
+    			flash("request-error", "You are already connected.");
+    			return ok(contact.render());
     		}else{
-    			flash("request-error", "Do you really want to connect with self? Try Meditation!");
+	    		query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+userEmail+"\' and b.email = \'"+email+"\' CREATE (a)-[r:KNOWS]->(b) return r;";
+	    		resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
     		}
-    	}else if(email != null && email != ""){
-    		query = "MATCH (a:Account), (b:Account) WHERE a.phone = \'"+userPhone+"\' and b.email = \'"+email+"\' CREATE (a)-[r:KNOWS]->(b) return r;";
-    		resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
     	}else{
     		flash("request-error", "Please enter either Phone Number or Email.");
     		return ok(contact.render());
@@ -77,7 +66,7 @@ public class Requests extends Controller {
 				JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
 				ArrayNode results = (ArrayNode)json;
 				String subject = "KinCards Connection Request";
-				String body = "<h2 style=\"color: #FF9500;\"> Hola! </h2><p><b>"+session().get("phone")+"</b> would like to add you to his KinCards. Please take necessary action.</p>";
+				String body = "<h2 style=\"color: #FF9500;\"> Hola! </h2><p><b>"+session().get("email")+"</b> would like to add you to his KinCards. Please take necessary action.</p>";
 				if (results.size() > 0){
 					if(email != "" && email != null){
 						EmailHelper.sendEmail(email, subject, body);
@@ -131,7 +120,7 @@ public class Requests extends Controller {
 				while(it.hasNext()){
 					email = it.next().getValue();		
 					if(email != null && email != ""){
-			    		String query = "MATCH (a:Account), (b:Account) WHERE a.phone = \'"+session().get("phone")+"\' and b.email = \'"+email+"\' CREATE (a)-[r:CONNECTED]->(b) return r;";
+			    		String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+session().get("email")+"\' and b.email = \'"+email+"\' CREATE (a)-[r:CONNECTED]->(b) return r;";
 			    		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 			    		JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
 						ArrayNode results = (ArrayNode)json;
@@ -151,8 +140,8 @@ public class Requests extends Controller {
 		return false;
 	}
 
-	private static boolean checkConnectionStatus(String phone, String userPhone) {
-		String query = "MATCH (a { phone:\'"+phone+"\' })-[r]-(b {phone: \'"+userPhone+"\'}) RETURN r";
+	private static boolean checkConnectionStatus(String email, String userEmail) {
+		String query = "MATCH (a { email:\'"+email+"\' })-[r]-(b {email: \'"+userEmail+"\'}) RETURN r";
 		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		
 		try {
@@ -178,8 +167,8 @@ public class Requests extends Controller {
     
     public static Result myRequests(){
     	
-    	String phone = session().get("phone");
-    	String query = "MATCH (in { phone:\'"+phone+"\' })<-[r:KNOWS]-(Account) RETURN Account order by Account.fName";
+    	String email = session().get("email");
+    	String query = "MATCH (in { email:\'"+email+"\' })<-[r:KNOWS]-(Account) RETURN Account order by Account.fName";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         
         List<User> userList = new ArrayList<User>();
@@ -226,15 +215,14 @@ public class Requests extends Controller {
     	return ok(myRequests.render(userList));
     }
     
-    public static Result acceptRequest(String phone){
-    	phone = "+"+phone;
-    	String userPhone = session().get("phone");
+    public static Result acceptRequest(String email){
+    	String userEmail = session().get("email");
     	String subject = "KinCards Connection Request Accepted";
-		String body = "Wollah!, "+userPhone+" has accepted your KinContacts connection request";
-    	String query = "MATCH (in { phone:\'"+phone+"\' })-[r:KNOWS]-({phone:\'"+userPhone+"\'}) DELETE r;";
+		String body = "Wollah!, "+userEmail+" has accepted your KinContacts connection request";
+    	String query = "MATCH (in { email:\'"+email+"\' })-[r:KNOWS]-({email:\'"+userEmail+"\'}) DELETE r;";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         
-        query = "MATCH (a:Account), (b:Account) WHERE a.phone = \'"+phone+"\' and b.phone = \'"+userPhone+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
+        query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+email+"\' and b.email = \'"+userEmail+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
         resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         
         try {
@@ -263,10 +251,9 @@ public class Requests extends Controller {
         );
     }
     
-public static Result rejectRequest(String phone){
-	phone = "+"+phone;
-	String userPhone = session().get("phone");
-	String query = "MATCH (in { phone:\'"+phone+"\' })-[r:KNOWS]-({phone:\'"+userPhone+"\'}) DELETE r;";
+public static Result rejectRequest(String email){
+	String userEmail = session().get("email");
+	String query = "MATCH (in { email:\'"+email+"\' })-[r:KNOWS]-({email:\'"+userEmail+"\'}) DELETE r;";
     String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         
     try {
@@ -293,19 +280,18 @@ public static Result rejectRequest(String phone){
 		return ok();
 	}
 	
-	public static Result emailContact(String phone, String email){
-		File file = VCFHelper.createVCF(phone);
+	public static Result emailContact(String targetEmail, String email){
+		File file = VCFHelper.createVCF(targetEmail);
 		String fileName = file.getAbsolutePath();
-		String userPhone = session().get("phone");
-		String subject = userPhone+" has shared a KinCard with you.";
+		String userEmail = session().get("email");
+		String subject = userEmail+" has shared a KinCard with you.";
 		String body = "";
 		EmailHelper.sendEmailWithAttachment(email, subject, body, fileName);
 		return ok("Email Sent");
 	}
 	
-	public static Result shareContact(String phone, String email){
-		phone = "+"+phone;
-		String query = "MATCH (a:Account), (b:Account) WHERE a.phone = \'"+phone+"\' and (b.email = \'"+email+"\' or b.phone = \'"+email+"\') CREATE (a)-[r:KNOWS]->(b) return b.email, a.email;";
+	public static Result shareContact(String userEmail, String email){
+		String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+userEmail+"\' and (b.email = \'"+email+"\' or b.phone = \'"+email+"\') CREATE (a)-[r:KNOWS]->(b) return b.email, a.email;";
 		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		try{
 			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
@@ -317,7 +303,7 @@ public static Result rejectRequest(String phone){
 				
 				String email1 = node.get("row").get(0).asText();
 				String email2 = node.get("row").get(1).asText();
-				String subject = session().get("phone")+" would like to see you connected.";
+				String subject = session().get("email")+" would like to see you connected.";
 				String body = "Connection request has been sent. Please take necessary action.";
 				EmailHelper.sendEmail(email1, subject, body);
 				body = "Connection request has been sent. You don't have to do anything at this moment.";
@@ -337,9 +323,9 @@ public static Result rejectRequest(String phone){
 	
 	public static Result mergeContacts(){
 		DynamicForm requestData = Form.form().bindFromRequest();
-    	String phone = requestData.get("phone");
+    	String email = requestData.get("email");
     	String pin = requestData.get("pin");
-    	String query = "MATCH (a)-[r:CONNECTED]-(b) WHERE a.phone = \'"+phone+"\' AND a.pin="+pin+" RETURN b.phone";
+    	String query = "MATCH (a)-[r:CONNECTED]-(b) WHERE a.email = \'"+email+"\' AND a.pin="+pin+" RETURN b.phone";
 		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		try{
 			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
@@ -349,7 +335,7 @@ public static Result rejectRequest(String phone){
             while (it.hasNext()) {
             	JsonNode node  = it.next();
 				String destPhone = node.get("row").get(0).asText();				
-				query = "MATCH (a:Account), (b:Account) WHERE a.phone = \'"+phone+"\' and b.phone = \'"+destPhone+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
+				query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+email+"\' and b.phone = \'"+destPhone+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
 		        resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);	
             }
 		}

@@ -32,24 +32,13 @@ public class Application extends Controller {
 
     public static class Login {
 
-        public String phone;
-        public String pin;
-        public String country;
+        public String email;
+        public String password;
         public String validate() {
-        	PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-        	PhoneNumber NumberProto = null;
-            try {
-        	  NumberProto = phoneUtil.parse(phone, country);
-        	  phone = phoneUtil.format(NumberProto, PhoneNumberFormat.E164);
-        	} catch (Exception e) {
-        		flash("login-error", "Error Parsing Phone Number. Please try again.");
-        		System.err.println("NumberParseException was thrown: " + e.toString());
+        	User user = User.findUser(email, password);
+        	if(user == null || user.email == null || user.email.equals("")){
+        		return "Error finding user from the supplied email & password";
         	}
-        	User user = User.findUser(phone, Integer.parseInt(pin));
-        	if(user == null || user.phone == null || user.phone == ""){
-        		return "Error finding user from the supplied phone & pin";
-        	}
-        	
             return null;
         }
     }
@@ -57,13 +46,11 @@ public class Application extends Controller {
     public static Result authenticate() {
         Form<Login> loginForm = Form.form(Login.class).bindFromRequest();
         if (loginForm.hasErrors()) {
-        	List<Country> countryList = new ArrayList<Country>();
-            countryList = CountryHelper.getCountryList();
-            flash("login-error", "Problem logging in. Please verify your phone number and pin.");
-            return badRequest(login.render(Form.form(Login.class), countryList));
+            flash("login-error", "Problem logging in. Please verify your Email and Password.");
+            return badRequest(login.render(Form.form(Login.class)));
         } else {
             session().clear();
-            session("phone", loginForm.get().phone);
+            session("email", loginForm.get().email);
 
             return redirect(
                     routes.Dashboard.contacts()
@@ -72,9 +59,7 @@ public class Application extends Controller {
     }
 
     public static Result login(){
-    	List<Country> countryList = new ArrayList<Country>();
-        countryList = CountryHelper.getCountryList();
-        return ok(login.render(Form.form(Login.class), countryList));
+        return ok(login.render(Form.form(Login.class)));
     }
 
     public static Result logout() {
@@ -87,33 +72,22 @@ public class Application extends Controller {
 
     public static Result register() {
         DynamicForm requestData = Form.form().bindFromRequest();
-        String phone = requestData.get("phone");
-        int pin = Integer.parseInt(requestData.get("pin"));
-        String country = requestData.get("country");
-        PhoneNumber NumberProto = null;
-        List<Country> countryList = new ArrayList<Country>();
-        countryList = CountryHelper.getCountryList();
-        boolean isValid = true; 
+        String email = requestData.get("email");
+        String pin = requestData.get("pin");
+        if(email != null && !email.equals("") && pin != null && !pin.equals("")){
+        	User bob = User.findByEmail(email);
         
-        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-        try {
-    	  NumberProto = phoneUtil.parse(phone, country);
-    	  phone = phoneUtil.format(NumberProto, PhoneNumberFormat.E164);
-    	} catch (Exception e) {
-    		isValid = false;
-    		flash("login-error", "Error Parsing Phone Number. Please try again.");
-    		System.err.println("NumberParseException was thrown: " + e.toString());
-    		return badRequest(login.render(Form.form(Login.class), countryList));
-    	}
-        User bob = User.findByPhone(phone);
-        
-        if((bob != null && bob.email != null) || !isValid){
-        	flash("login-error", "Phone number already registered.");
-            return badRequest(login.render(Form.form(Login.class), countryList));
+	        if((bob != null && bob.email != null)){
+	        	flash("login-error", "Account with this email already exists. Try logging in!");
+	            return badRequest(login.render(Form.form(Login.class)));
+	        }else{
+	            session().clear();
+	            session("email", email);
+	            bob = User.createUser(email, pin);
+	        }
         }else{
-            session().clear();
-            session("phone", phone);
-            bob = User.createUser(phone, pin, country);
+        	flash("login-error", "We need Email and Password both to log you in.");
+            return badRequest(login.render(Form.form(Login.class)));
         }
         return redirect(
             routes.Profile.editProfile()
@@ -121,29 +95,17 @@ public class Application extends Controller {
     }
 
 	public static Result forgotPassword(){
-		List<Country> countryList = new ArrayList<Country>();
-        countryList = CountryHelper.getCountryList();
-    	return ok(forgotPassword.render(countryList));
+    	return ok(forgotPassword.render());
     }
     
     
     public static Result recoverPassword(){
     	DynamicForm requestData = Form.form().bindFromRequest();
-        String phone = requestData.get("phone");
-        String country = requestData.get("country");
-        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-    	PhoneNumber NumberProto = null;
-        try {
-    	  NumberProto = phoneUtil.parse(phone, country);
-    	  phone = phoneUtil.format(NumberProto, PhoneNumberFormat.E164);
-    	} catch (Exception e) {
-    		System.err.println("NumberParseException was thrown: " + e.toString());
-    	}
-        String query = "MATCH (n {phone : \'"+phone+"\'}) RETURN n.pin, n.email;";
+        String email = requestData.get("email");
+        String query = "MATCH (n {email : \'"+email+"\'}) RETURN n.pin;";
 		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		String subject = "Your KinCards Pin";
 		String pin = "";
-		String email = "";
 		try{
 			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
 			ArrayNode results = (ArrayNode)json;
@@ -153,16 +115,13 @@ public class Application extends Controller {
 	        while (it.hasNext()) {
 	        	JsonNode node  = it.next();
 	        	pin = node.get("row").get(0).asText();
-	        	email = node.get("row").get(1).asText();
 	        	String body = "Your KinCards pin is "+pin;
 	        	EmailHelper.sendEmail(email, subject, body);
 	        }
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		List<Country> countryList = new ArrayList<Country>();
-        countryList = CountryHelper.getCountryList();
-    	return ok(forgotPassword.render(countryList));
+    	return ok(forgotPassword.render());
     }
     
     public static Result company(){

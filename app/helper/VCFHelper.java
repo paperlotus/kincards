@@ -18,9 +18,8 @@ import ezvcard.property.StructuredName;
 
 public class VCFHelper {
 
-	public static File createVCF(String phone) {
-		phone = "+"+phone;
-		String query = "MATCH (n {phone : \'"+phone+"\'}) RETURN n;";
+	public static File createVCF(String targetEmail) {
+		String query = "MATCH (n {email : \'"+targetEmail+"\'}) RETURN n;";
 		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		File file = null;
 		try{

@@ -17,7 +17,7 @@ public class User extends Model {
 
     public String phone;
     public String phone2;
-    public Integer pin;
+    public String pin;
     public String email;
     public String fName;
     public String lName;
@@ -40,8 +40,8 @@ public class User extends Model {
     public boolean active;
     public String country;
     
-    public static User findUser(String phone, Integer pin){
-    	String query = "MATCH (ee:Account) WHERE ee.phone = \'"+phone+"\' and ee.pin = "+pin+" RETURN ee;";
+    public static User findUser(String email, String pin){
+    	String query = "MATCH (ee:Account) WHERE ee.email = \'"+email+"\' and ee.pin = "+pin+" RETURN ee;";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         User user = new User();
         
@@ -55,7 +55,7 @@ public class User extends Model {
             	
             	user.phone = node.get("row").findPath("phone").asText();
             	user.phone2 = node.get("row").findPath("phone2").asText();
-                user.pin = node.get("row").findPath("pin").asInt();
+                user.pin = node.get("row").findPath("pin").asText();
                 user.addressLn1 = node.get("row").findPath("addressLn1").asText();
                 user.addressLn2 = node.get("row").findPath("addressLn2").asText();
                 user.city = node.get("row").findPath("city").asText();
@@ -103,7 +103,7 @@ public class User extends Model {
             	
             	user.phone = node.get("row").findPath("phone").asText();
             	user.phone2 = node.get("row").findPath("phone2").asText();
-                user.pin = node.get("row").findPath("pin").asInt();
+                user.pin = node.get("row").findPath("pin").asText();
                 user.addressLn1 = node.get("row").findPath("addressLn1").asText();
                 user.addressLn2 = node.get("row").findPath("addressLn2").asText();
                 user.city = node.get("row").findPath("city").asText();
@@ -151,7 +151,7 @@ public class User extends Model {
             	
             	user.phone = node.get("row").findPath("phone").asText();
             	user.phone2 = node.get("row").findPath("phone2").asText();
-                user.pin = node.get("row").findPath("pin").asInt();
+                user.pin = node.get("row").findPath("pin").asText();
                 user.addressLn1 = node.get("row").findPath("addressLn1").asText();
                 user.addressLn2 = node.get("row").findPath("addressLn2").asText();
                 user.city = node.get("row").findPath("city").asText();
@@ -183,8 +183,8 @@ public class User extends Model {
 		return user;
     }
     
-    public static User createUser(String phone, Integer pin, String country){
-    	String query = "CREATE (n:Account {phone : \'"+phone+"\' , pin : "+pin+" , country : \'"+country+"\' , createDate : \'"+new Date()+"\' , active : true }) RETURN n;";
+    public static User createUser(String email, String pin){
+    	String query = "CREATE (n:Account {email : \'"+email+"\' , pin : "+pin+", createDate : \'"+new Date()+"\' , active : true }) RETURN n;";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         User user = new User();
         
@@ -196,9 +196,8 @@ public class User extends Model {
             while (it.hasNext()) {
             	JsonNode node  = it.next();
             	
-            	user.phone = node.get("row").findPath("phone").asText();
-                user.pin = node.get("row").findPath("pin").asInt();
-                user.country = node.get("row").findPath("country").asText();
+            	user.phone = node.get("row").findPath("email").asText();
+                user.pin = node.get("row").findPath("pin").asText();
             }				
 			
 		} catch (JsonProcessingException e) {

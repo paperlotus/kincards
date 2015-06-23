@@ -31,8 +31,9 @@ public class Profile extends Controller{
 
     public static Result editProfile(){
         User user = null;
-        if(session().get("phone") != null) {
-            user = User.findByPhone(session().get("phone"));
+        String email = session().get("email"); 
+        if(email != null && !email.equals("")) {
+            user = User.findByEmail(email);
         }
         List<Country> countryList = new ArrayList<Country>();
         countryList = CountryHelper.getCountryList();
@@ -40,15 +41,13 @@ public class Profile extends Controller{
         return ok(profile.render(user, countryList));
     }
 
-    
-
 	public static Result updateProfile(){
         
     	DynamicForm requestData = Form.form().bindFromRequest();
 
-        String phone = session().get("phone");
+        String email = session().get("email");
+        String phone = requestData.get("phone");
         String phone2 = requestData.get("phone2");
-        String email = requestData.get("email");
         String fName = requestData.get("fName");
         String lName = requestData.get("lName");
         String twitter = requestData.get("twitter");
@@ -76,28 +75,28 @@ public class Profile extends Controller{
         companyLogoId = upload("cPic");
         String query = "";
         if(photoId > 0 && companyLogoId > 0){
-	        query = "MATCH (n {phone : \'"+phone+"\'}) SET n.phone2 = \'"+phone2+"\', n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
+	        query = "MATCH (n {email : \'"+email+"\'}) SET n.phone2 = \'"+phone2+"\', n.phone = \'"+phone+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
 	        		+ "n.photoId = \'"+photoId+"\', n.companyLogoId = \'"+companyLogoId+"\', "
 	        		+ "n.country = \'"+country+"\' RETURN n;";
         }else if(photoId > 0 && companyLogoId == 0){
-        	query = "MATCH (n {phone : \'"+phone+"\'}) SET n.phone2 = \'"+phone2+"\', n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
+        	query = "MATCH (n {email : \'"+email+"\'}) SET n.phone2 = \'"+phone2+"\', n.phone = \'"+phone+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
 	        		+ "n.photoId = \'"+photoId+"\', "
 	        		+ "n.country = \'"+country+"\' RETURN n;";
         }else if(companyLogoId > 0 && photoId == 0){
-        	query = "MATCH (n {phone : \'"+phone+"\'}) SET n.phone2 = \'"+phone2+"\', n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
+        	query = "MATCH (n {email : \'"+email+"\'}) SET n.phone2 = \'"+phone2+"\', n.phone = \'"+phone+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
 	        		+ " n.companyLogoId = \'"+companyLogoId+"\', "
 	        		+ "n.country = \'"+country+"\' RETURN n;";
         }else if(companyLogoId == 0 && photoId == 0){
-        	query = "MATCH (n {phone : \'"+phone+"\'}) SET n.phone2 = \'"+phone2+"\', n.email = \'"+email+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
+        	query = "MATCH (n {email : \'"+email+"\'}) SET n.phone2 = \'"+phone2+"\', n.phone = \'"+phone+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
@@ -113,8 +112,8 @@ public class Profile extends Controller{
             Iterator<JsonNode> it = results.iterator();
             while (it.hasNext()) {
             	JsonNode node  = it.next();
-            	user.phone = node.get("row").findPath("phone").asText();
-            	if(user.phone.equalsIgnoreCase(phone)){
+            	user.email = node.get("row").findPath("email").asText();
+            	if(user.email.equalsIgnoreCase(email)){
             		flash("profile-error", "Profile Successfully Updated");
             	}else{
             		flash("profile-error", "Error Updating Profile");
@@ -140,7 +139,7 @@ public class Profile extends Controller{
 		MultipartFormData body = request().body().asMultipartFormData();
 	    MultipartFormData.FilePart picture = body.getFile(name);
 	    if (picture != null && picture.getFilename() != null) {
-	        String fileName = session().get("phone")+name+picture.getFilename();
+	        String fileName = session().get("email")+name+picture.getFilename();
 	        File file = picture.getFile();
 	        Image image = new Image(fileName, file);
 	        return image.id;
@@ -157,9 +156,9 @@ public class Profile extends Controller{
 	public static Result updateSettings(){
 		DynamicForm requestData = Form.form().bindFromRequest();
 		
-		String phone = session().get("phone");
-		int pin = Integer.parseInt(requestData.get("pin"));
-		String query = "MATCH (n {phone : \'"+phone+"\'}) SET n.pin = "+pin+";";
+		String email = session().get("email");
+		String pin = requestData.get("pin");
+		String query = "MATCH (n {email : \'"+email+"\'}) SET n.pin = "+pin+";";
 		CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		flash("pin", "Successfully updated your pin");
 		
@@ -173,8 +172,8 @@ public class Profile extends Controller{
 	public static Result sendFeedback(){
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String body = requestData.get("feedback");
-		String userPhone = session().get("phone");
-		String subject = "Feedback from "+userPhone;
+		String userEmail = session().get("email");
+		String subject = "Feedback from "+userEmail;
 		
 		EmailHelper.sendEmail("info@kincards.com", subject, body);
 		return ok(feedback.render());
@@ -199,7 +198,7 @@ public class Profile extends Controller{
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String delete = requestData.get("delete");
 		if(delete.equalsIgnoreCase("DELETE")){
-			String query = "MATCH (p {phone: \'"+session().get("phone")+"\'})-[r]-() DELETE p, r;";
+			String query = "MATCH (p {email: \'"+session().get("email")+"\'})-[r]-() DELETE p, r;";
 			CreateSimpleGraph.sendTransactionalCypherQuery(query);
 			session().clear();
 	        flash("logout", "Damn! You have permanentaly deleted your profile.");

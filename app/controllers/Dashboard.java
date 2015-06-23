@@ -29,8 +29,8 @@ public class Dashboard extends Controller{
     
 	public static Result contacts(){
 		
-    	String phone = session().get("phone");
-    	String query = "MATCH (a)-[r:CONNECTED]-(b) where a.phone=\'"+phone+"\' RETURN b order by b.fName";
+    	String email = session().get("email");
+    	String query = "MATCH (a)-[r:CONNECTED]-(b) where a.email=\'"+email+"\' RETURN b order by b.fName";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         
         List<User> userList = new ArrayList<User>();
