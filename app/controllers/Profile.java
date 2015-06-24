@@ -158,7 +158,7 @@ public class Profile extends Controller{
 		
 		String email = session().get("email");
 		String pin = requestData.get("pin");
-		String query = "MATCH (n {email : \'"+email+"\'}) SET n.pin = "+pin+";";
+		String query = "MATCH (n {email : \'"+email+"\'}) SET n.pin = \'"+pin+"\';";
 		CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		flash("pin", "Successfully updated your pin");
 		

@@ -127,9 +127,9 @@
                                         </div>
                                         <div class="user">
                                             @if(user.photoId > 0){
-                                                <img src="@routes.Profile.getImage(user.photoId)" class="picture-src" id="wizardPicturePreview" title=""/>
+                                                <img src="@routes.Profile.getImage(user.photoId)" class="img-circle" id="wizardPicturePreview" title=""/>
                                             }else{
-                                            	<img src="@routes.Assets.at("images/default-avatar.png")" class="picture-src" id="wizardPicturePreview" title=""/>
+                                            	<img src="@routes.Assets.at("images/default-avatar.png")" class="img-circle" id="wizardPicturePreview" title=""/>
                                             }
                                         </div>
                                         <div class="content">

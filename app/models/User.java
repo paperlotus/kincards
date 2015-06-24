@@ -41,7 +41,8 @@ public class User extends Model {
     public String country;
     
     public static User findUser(String email, String pin){
-    	String query = "MATCH (ee:Account) WHERE ee.email = \'"+email+"\' and ee.pin = "+pin+" RETURN ee;";
+    	String query = "MATCH (ee:Account) WHERE ee.email = \'"+email+"\' and ee.pin = \'"+pin+"\' RETURN ee;";
+    	System.out.println(query);
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         User user = new User();
         
@@ -184,7 +185,7 @@ public class User extends Model {
     }
     
     public static User createUser(String email, String pin){
-    	String query = "CREATE (n:Account {email : \'"+email+"\' , pin : "+pin+", createDate : \'"+new Date()+"\' , active : true }) RETURN n;";
+    	String query = "CREATE (n:Account {email : \'"+email+"\' , pin : \'"+pin+"\', createDate : \'"+new Date()+"\' , active : true }) RETURN n;";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         User user = new User();
         
