@@ -4,24 +4,29 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
 <url>
-  <loc>http://www.kincards.com/</loc>
+  <loc>http://kincards.com/</loc>
 </url>
 <url>
-  <loc>http://www.kincards.com/login</loc>
+  <loc>http://kincards.com/login</loc>
 </url>
 <url>
-  <loc>http://www.kincards.com/company</loc>
+  <loc>http://kincards.com/business</loc>
 </url>
 <url>
-  <loc>http://www.kincards.com/forgotPassword</loc>
+  <loc>http://kincards.com/company</loc>
 </url>
 <url>
-  <loc>http://www.kincards.com/terms</loc>
+  <loc>http://kincards.com/privacy</loc>
 </url>
 <url>
-  <loc>http://www.kincards.com/privacy</loc>
+  <loc>http://kincards.com/terms</loc>
+</url>
+<url>
+  <loc>http://kincards.com/forgotPassword</loc>
+</url>
+<url>
+  <loc>http://kincards.com/contact</loc>
 </url>
 </urlset>

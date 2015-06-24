@@ -43,6 +43,7 @@
                                  <ul>
                                      <li><a href="#about" data-toggle="tab">Login</a></li>
                                      <li><a href="#account" data-toggle="tab">Create Account</a></li>
+                                     <li><a href="#business" data-toggle="tab">Business Accounts</a></li>
                                  </ul>
                                  <div class="tab-content">
                                      <div class="tab-pane" id="about">
@@ -88,7 +89,27 @@
                                                      <input type="password" class="form-control" id="exampleInputEmail1" placeholder="secret..." name="pin" required="required">
                                                  </div>
                                                  <h6>By clicking Register, you agree to KinCards's <a href="@routes.Application.terms()">User Agreement</a>, <a href="@routes.Application.privacy()">Privacy Policy</a></h6>
-                                                 <button type='submit' class='btn btn-finish btn-fill btn-warning btn-wd btn-sm' name='finish' value='Register'>Register</button>
+                                                 <button type='submit' class='btn btn-fill btn-warning btn-wd btn-sm' value='Register'>Register</button>
+                                                 <input type='button' class='btn btn-next btn-fill btn-warning btn-wd btn-sm' name='next' value='KinCards for Business?' />
+                                             </div>
+                                         </div>
+                                     </form>
+                                     </div>
+                                     <div class="tab-pane" id="business">
+                                     <form action="@routes.Application.sendContact()" method="post" name="businessForm">
+                                         <div class="row">
+                                             <h4 class="info-text">KinCards for Business</h4>
+                                             <div class="col-sm-3"></div>
+                                             <div class="col-sm-6">
+                                                 <div class="form-group">
+                                                     <label for="exampleInputEmail1">Email</label>
+                                                     <input type="email" class="form-control" id="exampleInputEmail1" placeholder="myemail@@kincards.com...." name="email" required="required">
+                                                 </div>
+                                                 <div class="form-group">
+                                                     <label for="exampleInputEmail1">Tell us what you are looking for</label>
+                                                     <textarea class="form-control" placeholder="Write to us..." rows="4" name="feedback" required="required"></textarea>
+                                                 </div>
+                                                 <button type='submit' class='btn btn-finish btn-fill btn-warning btn-wd btn-sm' name='finish' value='Register'>Send</button>
                                              </div>
                                          </div>
                                      </form>
@@ -96,10 +117,10 @@
                                  </div>
                                  <div class="wizard-footer">
                                  	<div class="pull-right">
-                                         <input type='button' class='btn btn-next btn-fill btn-warning btn-wd btn-sm' name='next' value='Create Account' />
+                                         <input type='button' class='btn btn-next btn-fill btn-warning btn-wd btn-sm' name='next' value='Next' />
                                      </div>
                                      <div class="pull-left">
-                                         <input type='button' class='btn btn-previous btn-fill btn-default btn-wd btn-sm' name='previous' value='Login' />
+                                         <input type='button' class='btn btn-previous btn-fill btn-default btn-wd btn-sm' name='previous' value='Previous' />
                                      </div>
                                      <div class="clearfix"></div>
                                  </div>

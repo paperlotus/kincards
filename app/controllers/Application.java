@@ -138,4 +138,23 @@ public class Application extends Controller {
 		
 		return ok(terms.render());
 	}
+	
+	public static Result contact(){
+		return ok(contactUs.render());
+	}
+	
+	public static Result sendContact(){
+		DynamicForm requestData = Form.form().bindFromRequest();
+		String body = requestData.get("feedback");
+		String userEmail = requestData.get("email");
+		String subject = "Sales request from "+userEmail;
+		
+		EmailHelper.sendEmail("info@kincards.com", subject, body);
+		flash("contact", "Thank you. Someone will get in touch with you.");
+		return ok(login.render(Form.form(Login.class)));
+	}
+	
+	public static Result business(){
+		return ok(business.render());
+	}
 }
