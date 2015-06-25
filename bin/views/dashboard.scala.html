@@ -120,9 +120,9 @@
                                         </div>
                                         <div class="user">
                                             @if(user.photoId > 0){
-                                                <img src="@routes.Profile.getImage(user.photoId)" class="picture-src" id="wizardPicturePreview" title=""/>
+                                                <img src="@routes.Profile.getImage(user.photoId)" class="img-circle" id="wizardPicturePreview" title=""/>
                                             }else{
-                                            	<img src="@routes.Assets.at("images/default-avatar.png")" class="picture-src" id="wizardPicturePreview" title=""/>
+                                            	<img src="@routes.Assets.at("images/default-avatar.png")" class="img-circle" id="wizardPicturePreview" title=""/>
                                             }
                                         </div>
                                         <div class="content text-center">
@@ -147,9 +147,9 @@
                                     <div class="back">
                                         <div class="header">
                                         	<div style="float:right; margin-left:2px;">
-                                        		<a href="" onclick="javascript: shareContact(@user.phone)"><i class="fa fa-share-alt"></i></a>
-	                                        	<a href="" onclick="javascript: emailContact(@user.phone)"><i class="fa fa-inbox"></i></a>
-	                                            <a href="" onclick="javascript: exportVCF(@user.phone)"><i class="fa fa-download"></i></a>
+                                        		<a href="" onclick="javascript: shareContact(@user.phone)" data-toggle="tooltip" data-placement="top" class="btn btn-default btn-tooltip" title="Share" data-trigger="hover"><i class="fa fa-share-alt"></i></a>
+	                                        	<a href="" onclick="javascript: emailContact(@user.phone)" data-toggle="tooltip" data-placement="top" class="btn btn-default btn-tooltip" title="Email" data-trigger="hover"><i class="fa fa-inbox"></i></a>
+	                                            <a href="" onclick="javascript: exportVCF(@user.phone)" data-toggle="tooltip" data-placement="top" class="btn btn-default btn-tooltip" title="Export" data-trigger="hover"><i class="fa fa-download"></i></a>
 	                                        </div>
                                         </div>
                                         <div class="content">
@@ -249,7 +249,7 @@
     <script type="text/javascript">
 	
         $().ready(function(){
-            $('[rel="tooltip"]').tooltip();
+            $('.btn-tooltip').tooltip();
         });
 
         function rotateCard(btn){

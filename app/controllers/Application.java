@@ -27,6 +27,7 @@ import views.html.*;
 public class Application extends Controller {
 
     public static Result index() {
+    	
         return ok(index2.render());
     }
 
@@ -84,6 +85,9 @@ public class Application extends Controller {
 	            session().clear();
 	            session("email", email);
 	            bob = User.createUser(email, pin);
+	            String subject = "Welcome to KinCards";
+	            String body = "Friend, Welcome to KinCards. You've just joined a community who have discoved how easy and efficient is to use KinCards.<br/><br/> Thank you for joining us.";
+	            EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 	        }
         }else{
         	flash("login-error", "We need Email and Password both to log you in.");
@@ -104,7 +108,7 @@ public class Application extends Controller {
         String email = requestData.get("email");
         String query = "MATCH (n {email : \'"+email+"\'}) RETURN n.pin;";
 		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
-		String subject = "Your KinCards Pin";
+		String subject = "Your KinCards Password";
 		String pin = "";
 		try{
 			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
@@ -115,8 +119,8 @@ public class Application extends Controller {
 	        while (it.hasNext()) {
 	        	JsonNode node  = it.next();
 	        	pin = node.get("row").get(0).asText();
-	        	String body = "Your KinCards pin is "+pin;
-	        	EmailHelper.sendEmail(email, subject, body);
+	        	String body = "You requested us to send your KinCards password. So here it is: "+pin;
+	        	EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 	        }
 		}catch (Exception e){
 			e.printStackTrace();
@@ -149,7 +153,7 @@ public class Application extends Controller {
 		String userEmail = requestData.get("email");
 		String subject = "Sales request from "+userEmail;
 		
-		EmailHelper.sendEmail("info@kincards.com", subject, body);
+		EmailHelper.sendEmail("info@kincards.com", subject, body, "forgotPassword.ftl");
 		flash("contact", "Thank you. Someone will get in touch with you.");
 		return ok(login.render(Form.form(Login.class)));
 	}

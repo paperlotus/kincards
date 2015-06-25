@@ -19,7 +19,9 @@ libraryDependencies ++= Seq(
   "com.googlecode.libphonenumber" % "libphonenumber" % "7.0.6",
   "org.apache.commons" % "commons-io" % "1.3.2",
   "com.googlecode.ez-vcard" % "ez-vcard" % "0.9.6",
-  "mysql" % "mysql-connector-java" % "5.1.18"
+  "mysql" % "mysql-connector-java" % "5.1.18",
+  "org.freemarker" % "freemarker" % "2.3.20",
+  "javax.activation" % "activation" % "1.0.2"
 )
 
 resolvers += "neo4j" at "http://m2.neo4j.org/content/groups/everything"

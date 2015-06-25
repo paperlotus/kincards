@@ -66,10 +66,10 @@ public class Requests extends Controller {
 				JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
 				ArrayNode results = (ArrayNode)json;
 				String subject = "KinCards Connection Request";
-				String body = "<h2 style=\"color: #FF9500;\"> Hola! </h2><p><b>"+session().get("email")+"</b> would like to add you to his KinCards. Please take necessary action.</p>";
+				String body = session().get("email")+" would like to add you to his KinCards. Please take necessary action.";
 				if (results.size() > 0){
 					if(email != "" && email != null){
-						EmailHelper.sendEmail(email, subject, body);
+						EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 					}else if(phone != "" && phone != null){
 						query ="MATCH (n{phone:\'"+phone+"\'}) return n.email;";
 						resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
@@ -82,7 +82,7 @@ public class Requests extends Controller {
 			            	User user = new User();
 			            	JsonNode node  = it.next();
 			            	user.email = node.get("row").get(0).asText();
-			            	EmailHelper.sendEmail(user.email, subject, body);
+			            	EmailHelper.sendEmail(user.email, subject, body, "forgotPassword.ftl");
 			            }
 					}
 					flash("request-error", "Request sent");
@@ -218,7 +218,7 @@ public class Requests extends Controller {
     public static Result acceptRequest(String email){
     	String userEmail = session().get("email");
     	String subject = "KinCards Connection Request Accepted";
-		String body = "Wollah!, "+userEmail+" has accepted your KinContacts connection request";
+		String body = userEmail+" has accepted your KinContacts connection request";
     	String query = "MATCH (in { email:\'"+email+"\' })-[r:KNOWS]-({email:\'"+userEmail+"\'}) DELETE r;";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         
@@ -235,7 +235,7 @@ public class Requests extends Controller {
             	User user = new User();
             	JsonNode node  = it.next();
             	user.email = node.get("row").get(0).asText();
-            	EmailHelper.sendEmail(user.email, subject, body);
+            	EmailHelper.sendEmail(user.email, subject, body, "forgotPassword.ftl");
             	flash("request", "Request Accepted! Contact has been added to your dashboard.");
             }				
 			
@@ -304,10 +304,10 @@ public static Result rejectRequest(String email){
 				String email1 = node.get("row").get(0).asText();
 				String email2 = node.get("row").get(1).asText();
 				String subject = session().get("email")+" would like to see you connected.";
-				String body = "Connection request has been sent. Please take necessary action.";
-				EmailHelper.sendEmail(email1, subject, body);
+				String body = "Connection request has been sent.";
+				EmailHelper.sendEmail(email1, subject, body, "forgotPassword.ftl");
 				body = "Connection request has been sent. You don't have to do anything at this moment.";
-				EmailHelper.sendEmail(email2, subject, body);
+				EmailHelper.sendEmail(email2, subject, body, "forgotPassword.ftl");
 				return ok("Email Sent");
             }
 		}

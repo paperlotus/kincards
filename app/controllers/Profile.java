@@ -175,7 +175,7 @@ public class Profile extends Controller{
 		String userEmail = session().get("email");
 		String subject = "Feedback from "+userEmail;
 		
-		EmailHelper.sendEmail("info@kincards.com", subject, body);
+		EmailHelper.sendEmail("info@kincards.com", subject, body, "forgotPassword.ftl");
 		return ok(feedback.render());
 	}
 	

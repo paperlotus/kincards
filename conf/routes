@@ -39,4 +39,5 @@ GET		/business					controllers.Application.business()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /emailTemplate.html		    controllers.Assets.at(path="/public", file = "emailTemplate.html")
 GET     /sitemap.xml    			controllers.Assets.at(path="/public", file = "sitemap.xml")

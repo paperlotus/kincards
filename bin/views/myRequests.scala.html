@@ -127,9 +127,9 @@
                                         </div>
                                         <div class="user">
                                             @if(user.photoId > 0){
-                                                <img src="@routes.Profile.getImage(user.photoId)" class="picture-src" id="wizardPicturePreview" title=""/>
+                                                <img src="@routes.Profile.getImage(user.photoId)" class="img-circle" id="wizardPicturePreview" title=""/>
                                             }else{
-                                            	<img src="@routes.Assets.at("images/default-avatar.png")" class="picture-src" id="wizardPicturePreview" title=""/>
+                                            	<img src="@routes.Assets.at("images/default-avatar.png")" class="img-circle" id="wizardPicturePreview" title=""/>
                                             }
                                         </div>
                                         <div class="content">
@@ -154,8 +154,8 @@
                                     <div class="back">
                                         <div class="header">
                                             <ul style="margin-left:17%;">
-                                            	<a href="javascript: acceptRq(@user.phone);" class="btn btn-default btn-circle">√</a>
-                                            	<a href="javascript: rejectRq(@user.phone);" class="btn btn-default btn-circle">X</a> 
+                                            	<a href="javascript: acceptRq(@user.email);" class="btn btn-default btn-circle">√</a>
+                                            	<a href="javascript: rejectRq(@user.email);" class="btn btn-default btn-circle">X</a> 
                                             </ul>
                                         </div>
                                         <div class="content">

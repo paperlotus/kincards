@@ -133,7 +133,7 @@
 	                                                </div>
 	                                                <div class="form-group">
 	                                                    <label for="exampleInputEmail1">Email</label>
-	                                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="andrew@@cardswithwings.com..." name="email">
+	                                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="andrew@@kincards.com..." name="email">
 	                                                </div>
 	                                                <div class="form-group">
 	                                                    <input type='submit' class='btn btn-fill btn-warning btn-wd btn-sm' name='finish' value='Send Request' onclick="javascript: submitForm();"/>
@@ -170,11 +170,11 @@
                                                        <label for="exampleInputEmail1">Enter details of the account that you want to import contacts from.</label>
                                                    </div>
                                                    <div class="form-group">
-                                                       <label for="exampleInputEmail1">Phone Number</label>
-                                                       <input type="text" class="form-control" id="exampleInputEmail1" placeholder="" name="phone" required="required">
+                                                       <label for="exampleInputEmail1">Email</label>
+                                                       <input type="email" class="form-control" id="exampleInputEmail1" placeholder="muemail@@kincards.com" name="email" required="required">
                                                    </div>
                                                    <div class="form-group">
-                                                       <label for="exampleInputEmail1">Pin</label>
+                                                       <label for="exampleInputEmail1">Password</label>
                                                        <input type="password" class="form-control" id="exampleInputEmail1" placeholder="" name="pin" required="required">
                                                    </div>
                                                    <div class="form-group">
@@ -185,11 +185,11 @@
                                         </form>
                                        </div>
                                     @if(flash.get("request-error") != null && flash.get("request-error") != "") {
-				            <div class="alert alert-warning alert-warning" style="opacity: 0.6; margin-left: 20%; margin-right : 20%; border-radius: 50px;">
-				                <a href="#" class="close" data-dismiss="alert">&times;</a>
-				                @flash.get("request-error")
-				            </div>
-				        }
+							            <div class="alert alert-warning alert-warning" style="opacity: 0.6; margin-left: 20%; margin-right : 20%; border-radius: 50px;">
+							                <a href="#" class="close" data-dismiss="alert">&times;</a>
+							                @flash.get("request-error")
+							            </div>
+							        }
                                 </div>
                                 <div class="wizard-footer">
                                 	<div class="pull-right">

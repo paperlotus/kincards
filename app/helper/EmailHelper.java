@@ -1,16 +1,23 @@
 package helper;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.*;
 
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.activation.*;
 
+import controllers.routes;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import play.Play;
 
 public class EmailHelper {
 
-	public static void sendEmail(String toEmail, String subject, String body) {
+	public static void sendEmail(String toEmail, String subject, String body, String ftl) {
 		  String to = toEmail;
 	      final String username = Play.application().configuration().getString("emailUserName");
 	      final String password = Play.application().configuration().getString("emailUserPassword");
@@ -51,7 +58,22 @@ public class EmailHelper {
 	         
 	         MimeMultipart mp = new MimeMultipart();
 	         MimeBodyPart part = new MimeBodyPart();
-	         part.setText(body);
+//	         part.setText(body);
+	         
+	      // freemarker stuff.
+	            Configuration cfg = new Configuration();
+	            System.out.println("Working Directory = " +System.getProperty("user.dir"));
+	            Template template = cfg.getTemplate("/emailTemplate.html");
+	            Map<String, String> rootMap = new HashMap<String, String>();
+	            rootMap.put("body", body);
+	            rootMap.put("from", "KinCards Team");
+	            Writer out = new StringWriter();
+	            template.process(rootMap, out);
+	            // freemarker stuff ends.
+	 
+	            /* you can add html tags in your text to decorate it. */
+	            part.setContent(out.toString(), "text/html");
+	         
 	         mp.addBodyPart(part);
 	         message1.setContent(mp);
 
@@ -64,7 +86,13 @@ public class EmailHelper {
 	         Transport.send(message1);
 	      }catch (MessagingException mex) {
 	         mex.printStackTrace();
-	      }
+	      } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TemplateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
