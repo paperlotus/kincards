@@ -4,14 +4,18 @@
 	<meta charset="utf-8" />
 	<link rel="icon" type="image/png" href="/assets/images/favicon.ico">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	
-	<title>KinCards</title>
+	<meta name="description" content="KinCards is your Virtual/digital contact Card app, created with the goal maintain connections eliminating the need to carry business cards.">
+	<meta name="msvalidate.01" content="B8402883AB103793955D2939A0B3B41E" />
+    <meta name="keywords" content="Business Cards, Virtual Business Cards, Online Business Cards, Business Cards in cloud, KinCards, Kincards.com, share contacts differently">
+    <meta name="author" content="Prashant Yadav">
+	<title>KinCards - Share contacts differently</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
     
     <link href="@routes.Assets.at("stylesheets/bootstrap.css")" rel="stylesheet" />
 	<link href="@routes.Assets.at("stylesheets/examples.css")" rel="stylesheet" /> 
+	<link href="@routes.Assets.at("stylesheets/login-register.css")" rel="stylesheet" />
 	<script src="@routes.Assets.at("javascripts/login-register.js")" type="text/javascript"></script> 
 	<link href="@routes.Assets.at("stylesheets/gsdk.css")" rel="stylesheet" />
 
@@ -26,11 +30,19 @@
 
 <nav class="navbar navbar-inverse navbar-transparent navbar-fixed-top" role="navigation">
     <div class="container">
-
+	<div class="navbar-header">
+      <button id="menu-toggle" type="button" class="navbar-toggle">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar bar1"></span>
+        <span class="icon-bar bar2"></span>
+        <span class="icon-bar bar3"></span>
+      </button>
+    </div>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse">
       <ul  class="nav navbar-nav navbar-right">
             <li><a href="@routes.Application.login()" class="btn btn-round btn-default">Login/Register</a></li>
+<!-- 			<li><a data-toggle="modal" href="javascript:void(0)" onclick="openLoginModal();" class="btn btn-round btn-default">Login/Register</a></li> -->
        </ul>
       
     </div><!-- /.navbar-collapse -->
@@ -40,17 +52,17 @@
 <div class="wrapper">
     <div class="parallax filter-black">
         <div class="parallax-image">
-            <img src="/assets/images/examples/about_5.jpg">
+            <img src="/assets/images/examples/about_5.jpg" alt="KinCards about5">
         </div>    
         <div class="small-info">
-            <img alt="" src="@routes.Assets.at("images/Klogo.png")"></a><br/>
+            <img alt="KinCards logo" src="@routes.Assets.at("images/Klogo.png")"></a><br/>
             <h3>Change the way you exchange information across all platforms.</h3>    
         </div>
     </div>
     
     <div class="section section-description">
            <div class="container">
-               <h2 class="section-title">About KinCards</h2>
+               <h1 class="section-title">About KinCards</h1>
 
                <div class="row">
                     <div class="col-md-6">
@@ -67,14 +79,11 @@ KinCards will allow you to share your contact details, as well as gain access to
                               <!-- Wrapper for slides -->
                               <div class="carousel-inner">
                                 <div class="item active">
-                                  <img src="/assets/images/examples/SS1.png" alt="">
+                                  <img src="/assets/images/examples/SS1.png" alt="KinCards screenshot 1">
                                 </div>
                                 <div class="item">
-                                  <img src="/assets/images/examples/SS2.png" alt="">
+                                  <img src="/assets/images/examples/SS2.png" alt="KinCards screenshot 2">
                                 </div>
-<!--                                 <div class="item"> -->
-<!--                                   <img src="/assets/images/examples/home_1.png" alt=""> -->
-<!--                                 </div> -->
                               </div>
                             
                               <ol class="carousel-indicators">
@@ -88,23 +97,23 @@ KinCards will allow you to share your contact details, as well as gain access to
                 <div class="space-50"></div>
                 <hr>
                 <div class="space-50"></div>
-                <h2 class="section-title">What it does?</h2>
+                <h1 class="section-title">What it does?</h1>
                 <div class="row">
                    <div class="col-md-6">
                       <div class="img-container">
-                          <img src="/assets/images/examples/SS3.png" alt="">
+                          <img src="/assets/images/examples/SS3.png" alt="KinCards screenshot 3">
                       </div>
                    </div>
                    <div class="col-md-6">
                        <p>
                            KinCards lets you create and personalize your own virtual business card, and share your contact information immediately with your phone number or email. Connections can easily exchange, collect and store KinCards. The stored cards are saved to your KinCard app and easily accessed at any time. The app then acts as your own personal rolodex, complete with photo, phone numbers, social media sites, website, address and business information.</p>
-                        <p>Your contact information is never shared publicly, and you’ll never lose anyone's contact information again.</p>
+                        <p>Your contact information is never shared publicly, and you’ll never loose anyone's contact information again.</p>
                     
                    </div>
                </div>
                <hr>
                <div class="space-50"></div>
-               <h2 class="section-title">KinCards for Business</h2>
+               <h1 class="section-title">KinCards for Business</h1>
                <div class="row">
                     <div class="col-md-6">
                        <p>
@@ -123,7 +132,7 @@ The best part is: if you lose your phone or change your device, you won’t lose
                               <!-- Wrapper for slides -->
                               <div class="carousel-inner">
                                 <div class="item active">
-                                  <img src="/assets/images/examples/SS4.png" alt="">
+                                  <img src="/assets/images/examples/SS4.png" alt="KinCards screenshot">
                                 </div>
                               </div>
                         </div>
@@ -177,20 +186,36 @@ The best part is: if you lose your phone or change your device, you won’t lose
      <div class="social-line">
          <div class="container">
             <div class="row">
-                 <div class="col-md-4">
+            	 <div class="col-md-1">
+                     
+                 </div>
+                 <div class="col-md-2">
                      <a href="http://on.fb.me/1HcNS7e" target="_blank" class="btn btn-round btn-fill btn-social btn-facebook">
                          <i class="fa fa-facebook-square"></i> Facebook
                      </a>
                  </div>
-                  <div class="col-md-4">
+                  <div class="col-md-2">
                      <a href="http://bit.ly/1RuWF43" target="_blank" class="btn btn-round btn-fill btn-social btn-twitter">
                          <i class="fa fa-twitter"></i> Twitter
                      </a>
                  </div>
-                  <div class="col-md-4">
-                     <a href="http://bit.ly/1Kbr3kN" target="_blank" class="btn btn-round btn-fill btn-social btn-google">
+                  <div class="col-md-2">
+                     <a href="http://bit.ly/1Kbr3kN" target="_blank" class="btn btn-round btn-fill btn-social btn-tumblr">
                          <i class="fa fa-tumblr"></i> Tumblr
                      </a>
+                 </div>
+                 <div class="col-md-2">
+                     <a href="http://google.com/+KincardsForBusiness" target="_blank" class="btn btn-round btn-fill btn-social btn-google">
+                         <i class="fa fa-google-plus"></i> Google+
+                     </a>
+                 </div>
+                 <div class="col-md-2">
+                     <a href="https://www.linkedin.com/company/kincards" target="_blank" class="btn btn-round btn-fill btn-social btn-linkedin">
+                         <i class="fa fa-linkedin"></i> Linkedin
+                     </a>
+                 </div>
+                 <div class="col-md-1">
+                     
                  </div>
 <!--                  <div class="col-md-3"> -->
 <!--                      <a href="" target="_blank" class="btn btn-round btn-fill btn-social btn-pinterest"> -->
@@ -199,6 +224,69 @@ The best part is: if you lose your phone or change your device, you won’t lose
 <!--                  </div> -->
             </div>
          </div>
+         <div class="modal fade login" id="loginModal">
+		      <div class="modal-dialog login animated">
+    		      <div class="modal-content">
+    		         <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Login with</h4>
+                    </div>
+<!--                     <div class="modal-body">   -->
+<!--                         <div class="box"> -->
+<!--                              <div class="content"> -->
+<!--                                 <div class="social"> -->
+<!--                                     <a class="circle github" href="/auth/github"> -->
+<!--                                         <i class="fa fa-github fa-fw"></i> -->
+<!--                                     </a> -->
+<!--                                     <a id="google_login" class="circle google" href="/auth/google_oauth2"> -->
+<!--                                         <i class="fa fa-google-plus fa-fw"></i> -->
+<!--                                     </a> -->
+<!--                                     <a id="facebook_login" class="circle facebook" href="/auth/facebook"> -->
+<!--                                         <i class="fa fa-facebook fa-fw"></i> -->
+<!--                                     </a> -->
+<!--                                 </div> -->
+<!--                                 <div class="division"> -->
+<!--                                     <div class="line l"></div> -->
+<!--                                       <span>or</span> -->
+<!--                                     <div class="line r"></div> -->
+<!--                                 </div> -->
+<!--                                 <div class="error"></div> -->
+<!--                                 <div class="form loginBox"> -->
+<!--                                     <form method="post" action="/login" accept-charset="UTF-8"> -->
+<!--                                     <input id="email" class="form-control" type="text" placeholder="Email" name="email"> -->
+<!--                                     <input id="password" class="form-control" type="password" placeholder="Password" name="password"> -->
+<!--                                     <input class="btn btn-default btn-login" type="button" value="Login" onclick="loginAjax()"> -->
+<!--                                     </form> -->
+<!--                                 </div> -->
+<!--                              </div> -->
+<!--                         </div> -->
+<!--                         <div class="box"> -->
+<!--                             <div class="content registerBox" style="display:none;"> -->
+<!--                              <div class="form"> -->
+<!--                                 <form method="post" html="{:multipart=>true}" data-remote="true" action="/register" accept-charset="UTF-8"> -->
+<!--                                 <input id="email" class="form-control" type="text" placeholder="Email" name="email"> -->
+<!--                                 <input id="password" class="form-control" type="password" placeholder="Password" name="password"> -->
+<!--                                 <input id="password_confirmation" class="form-control" type="password" placeholder="Repeat Password" name="password_confirmation"> -->
+<!--                                 <input class="btn btn-default btn-register" type="submit" value="Create account" name="commit"> -->
+<!--                                 </form> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+<!--                         </div> -->
+<!--                     </div> -->
+                    <div class="modal-footer">
+                        <div class="forgot login-footer">
+                            <span>Looking to 
+                                 <a href="javascript: showRegisterForm();">create an account</a>
+                            ?</span>
+                        </div>
+                        <div class="forgot register-footer" style="display:none">
+                             <span>Already have an account?</span>
+                             <a href="javascript: showLoginForm();">Login</a>
+                        </div>
+                    </div>        
+    		      </div>
+		      </div>
+		  </div>
      </div> 
 
     
@@ -225,9 +313,19 @@ The best part is: if you lose your phone or change your device, you won’t lose
                     </nav>
                 </div>
                 <div class="col-md-4">
+                    <h5 class="title">Apps</h5>
                     <nav>
                         <ul>
-                            
+                            <li>
+                                <a href="https://play.google.com/store/apps/details?id=in.kincards" >
+                                    Android App
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://itunes.apple.com/us/app/kincards/id1010345215?mt=8">
+                                   IOS App
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </div>

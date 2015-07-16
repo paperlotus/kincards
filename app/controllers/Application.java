@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.brickred.socialauth.SocialAuthConfig;
+import org.brickred.socialauth.SocialAuthManager;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -36,6 +39,7 @@ public class Application extends Controller {
         public String email;
         public String password;
         public String validate() {
+        	System.out.println("email="+email+" ,password="+password);
         	User user = User.findUser(email, password);
         	if(user == null || user.email == null || user.email.equals("")){
         		return "Error finding user from the supplied email & password";
@@ -44,15 +48,14 @@ public class Application extends Controller {
         }
     }
 
-    public static Result authenticate() {
-        Form<Login> loginForm = Form.form(Login.class).bindFromRequest();
-        if (loginForm.hasErrors()) {
-            flash("login-error", "Problem logging in. Please verify your Email and Password.");
-            return badRequest(login.render(Form.form(Login.class)));
-        } else {
+    public static Result authenticate(String email, String password) {
+//        Form<Login> loginForm = Form.form(Login.class).bindFromRequest();
+    	User user = User.findUser(email, password);
+    	if(user == null || user.email == null || user.email.equals("")){
+    		return ok("Bad Request");
+    	}else {
             session().clear();
-            session("email", loginForm.get().email);
-
+            session("email", user.email);
             return redirect(
                     routes.Dashboard.contacts()
             );
@@ -71,27 +74,25 @@ public class Application extends Controller {
         );
     }
 
-    public static Result register() {
-        DynamicForm requestData = Form.form().bindFromRequest();
-        String email = requestData.get("email");
-        String pin = requestData.get("pin");
+    public static Result register(String email, String pin) {
         if(email != null && !email.equals("") && pin != null && !pin.equals("")){
         	User bob = User.findByEmail(email);
         
 	        if((bob != null && bob.email != null)){
 	        	flash("login-error", "Account with this email already exists. Try logging in!");
-	            return badRequest(login.render(Form.form(Login.class)));
+//	            return badRequest(login.render(Form.form(Login.class)));
+	        	return ok("Bad Request");
 	        }else{
 	            session().clear();
 	            session("email", email);
 	            bob = User.createUser(email, pin);
 	            String subject = "Welcome to KinCards";
-	            String body = "Friend, Welcome to KinCards. You've just joined a community who have discoved how easy and efficient is to use KinCards.<br/><br/> Thank you for joining us.";
+	            String body = "Friend, Welcome to KinCards. You've just joined a community who have discoved how easy and efficient is to share contacts.<br/><br/> Thank you for joining us.";
 	            EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 	        }
         }else{
         	flash("login-error", "We need Email and Password both to log you in.");
-            return badRequest(login.render(Form.form(Login.class)));
+            return ok("Bad Request");
         }
         return redirect(
             routes.Profile.editProfile()
@@ -115,13 +116,17 @@ public class Application extends Controller {
 			ArrayNode results = (ArrayNode)json;
 			json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
 			results = (ArrayNode)json;
-	        Iterator<JsonNode> it = results.iterator();
-	        while (it.hasNext()) {
-	        	JsonNode node  = it.next();
-	        	pin = node.get("row").get(0).asText();
-	        	String body = "You requested us to send your KinCards password. So here it is: "+pin;
-	        	EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
-	        }
+			if (results.size() > 0){
+		        Iterator<JsonNode> it = results.iterator();
+		        while (it.hasNext()) {
+		        	JsonNode node  = it.next();
+		        	pin = node.get("row").get(0).asText();
+		        	String body = "You asked for your KinCards password. Here it is: "+pin;
+		        	EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
+		        }
+			}else{
+				flash("pin", "We are not able to find your account with this email address. Why don't you try creating an account using this email.");
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -151,14 +156,31 @@ public class Application extends Controller {
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String body = requestData.get("feedback");
 		String userEmail = requestData.get("email");
-		String subject = "Sales request from "+userEmail;
+		String phone = requestData.get("phone");
+		String subject = "Sales request from "+userEmail+" ,ph:"+phone;
 		
 		EmailHelper.sendEmail("info@kincards.com", subject, body, "forgotPassword.ftl");
-		flash("contact", "Thank you. Someone will get in touch with you.");
+		flash("login-error", "Thank you for your interest. Someone will get in touch with you shortly.");
 		return ok(login.render(Form.form(Login.class)));
 	}
 	
 	public static Result business(){
 		return ok(business.render());
+	}
+	
+	public static Result socialConnections() throws Exception{
+		System.out.println("Hello");
+		SocialAuthConfig config = SocialAuthConfig.getDefault();
+		config.load();
+		
+		SocialAuthManager manager = new SocialAuthManager();
+		manager.setSocialAuthConfig(config);
+		
+		String successUrl = "http://opensource.brickred.com/socialauthdemo/socialAuthSuccessAction.do";
+		
+		String url = manager.getAuthenticationUrl("yahoo", successUrl);
+		System.out.println("url="+url);
+		redirect(url);
+		return ok();
 	}
 }

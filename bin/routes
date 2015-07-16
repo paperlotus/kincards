@@ -4,8 +4,8 @@
 
 # Home page
 GET     /                           controllers.Application.index()
-POST    /login                       controllers.Application.authenticate()
-POST    /register                   controllers.Application.register()
+POST    /login/:email/:pin                      controllers.Application.authenticate(email: String, pin: String)
+POST    /register/:email/:pin                    controllers.Application.register(email: String, pin: String)
 GET     /dashboard                  controllers.Dashboard.contacts()
 GET     /logout                     controllers.Application.logout()
 GET     /login                      controllers.Application.login()
@@ -36,6 +36,12 @@ POST	/export:ph					controllers.Dashboard.exportVCF(ph:String)
 POST	/email/:ph/:email				controllers.Requests.emailContact(ph:String, email:String)
 POST	/share/:ph/:email				controllers.Requests.shareContact(ph:String, email:String)
 GET		/business					controllers.Application.business()
+GET 	/social						controllers.Application.socialConnections()
+
+#Twitter Authentication
+GET     /twitter/homeTimeline controllers.Twitter.homeTimeline()
+GET     /twitter/auth         controllers.Twitter.auth()
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

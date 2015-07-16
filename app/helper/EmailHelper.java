@@ -62,8 +62,7 @@ public class EmailHelper {
 	         
 	      // freemarker stuff.
 	            Configuration cfg = new Configuration();
-	            System.out.println("Working Directory = " +System.getProperty("user.dir"));
-	            Template template = cfg.getTemplate("/emailTemplate.html");
+	            Template template = cfg.getTemplate("/lib/public/emailTemplate.html");
 	            Map<String, String> rootMap = new HashMap<String, String>();
 	            rootMap.put("body", body);
 	            rootMap.put("from", "KinCards Team");

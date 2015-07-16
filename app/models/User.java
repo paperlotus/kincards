@@ -42,7 +42,6 @@ public class User extends Model {
     
     public static User findUser(String email, String pin){
     	String query = "MATCH (ee:Account) WHERE ee.email = \'"+email+"\' and ee.pin = \'"+pin+"\' RETURN ee;";
-    	System.out.println(query);
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         User user = new User();
         

@@ -46,6 +46,7 @@ public class CreateSimpleGraph
     	
         // START SNIPPET: queryAllNodes
         final String txUri = SERVER_ROOT_URI + "transaction/commit";
+        try{
         WebResource resource = Client.create().resource( txUri );
 
         String payload = "{\"statements\" : [ {\"statement\" : \"" +query + "\"} ]}";
@@ -64,6 +65,10 @@ public class CreateSimpleGraph
         response.close();
         // END SNIPPET: queryAllNodes
         return resp;
+        }catch(Exception e){
+        	e.printStackTrace();
+        }
+        return null;
     }
 
     private static void findSingersInBands( URI startNode )

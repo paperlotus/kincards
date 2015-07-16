@@ -66,9 +66,9 @@ public class Requests extends Controller {
 				JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
 				ArrayNode results = (ArrayNode)json;
 				String subject = "KinCards Connection Request";
-				String body = session().get("email")+" would like to add you to his KinCards. Please take necessary action.";
+				String body = session().get("email")+" would like to add you to their KinCards. Please take necessary action.";
 				if (results.size() > 0){
-					if(email != "" && email != null){
+					if(!email.equals("") && email != null){
 						EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 					}else if(phone != "" && phone != null){
 						query ="MATCH (n{phone:\'"+phone+"\'}) return n.email;";
@@ -87,7 +87,13 @@ public class Requests extends Controller {
 					}
 					flash("request-error", "Request sent");
 				}else{
-					flash("request-error", "Unfortunately, your contact has not joined KinCards yet.");
+					if(!email.equals("") && email != null){
+						body = session().get("email")+" would like to add you to their KinCards. Kincards is a great way to share, and manage contacts. <a href=\"http://kincards.com/login\">Try us now.</a>";
+						EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
+					}else{
+						System.out.println("email is null??");
+					}
+					flash("request-error", "Unfortunately, your contact has not joined KinCards yet. We have told your contact that you are missing them here.");
 				}
 				
 			} catch (JsonProcessingException e) {

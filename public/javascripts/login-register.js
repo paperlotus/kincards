@@ -56,20 +56,6 @@ function openRegisterModal(){
     
 }
 
-function loginAjax(){
-	
-    $.post( "@routes.Application.authenticate()", function( data ) {
-            if(data == 1){
-                window.location.replace("/home");            
-            } else {
-                 shakeModal(); 
-            }
-         });
-
-/*   Simulate error message from the server   */
-//     shakeModal();
-}
-
 function shakeModal(){
     $('#loginModal .modal-dialog').addClass('shake');
              $('.error').addClass('alert alert-danger').html("Invalid phone/pin combination");

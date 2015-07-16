@@ -160,7 +160,7 @@ public class Profile extends Controller{
 		String pin = requestData.get("pin");
 		String query = "MATCH (n {email : \'"+email+"\'}) SET n.pin = \'"+pin+"\';";
 		CreateSimpleGraph.sendTransactionalCypherQuery(query);
-		flash("pin", "Successfully updated your pin");
+		flash("pin", "Successfully updated your password");
 		
 		return ok(settings.render());
 	}

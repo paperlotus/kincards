@@ -21,8 +21,10 @@ libraryDependencies ++= Seq(
   "com.googlecode.ez-vcard" % "ez-vcard" % "0.9.6",
   "mysql" % "mysql-connector-java" % "5.1.18",
   "org.freemarker" % "freemarker" % "2.3.20",
-  "javax.activation" % "activation" % "1.0.2"
+  "javax.activation" % "activation" % "1.0.2",
+  "org.brickred" % "socialauth" % "4.2"
 )
 
-resolvers += "neo4j" at "http://m2.neo4j.org/content/groups/everything"
-
+resolvers ++= Seq("neo4j" at "http://m2.neo4j.org/content/groups/everything",
+Resolver.sonatypeRepo("snapshots")
+)
