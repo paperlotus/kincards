@@ -82,6 +82,7 @@
 	                          <ul class="dropdown-menu">
 	                            <li><a href="@routes.Profile.editProfile()">Profile</a></li>
 	                            <li><a href="@routes.Profile.getSettings()">Settings</a></li>
+	                            <li><a href="@routes.Application.getMyCard(session.get("userName"))">My KinCard</a></li>
 	                            <li><a href="@routes.Application.logout()">Sign Out</a></li>
 	                          </ul>
 	                    </li>
@@ -104,7 +105,7 @@
             <div class="container">
                 <div class="row">
                 	@if(flash.get("request") != null && flash.get("request") != "") {
-			            <div class="alert alert-warning alert-warning" style="opacity: 0.6; margin-left: 20%; margin-right : 20%; border-radius: 50px;">
+			            <div class="error alert alert-danger">
 			                <a href="#" class="close" data-dismiss="alert">&times;</a>
 			                @flash.get("request")
 			            </div>
@@ -126,7 +127,7 @@
                                         </div>
                                         <div class="user">
                                             @if(user.photoId > 0){
-                                                <img src="@routes.Profile.getImage(user.photoId)" class="img-circle" id="wizardPicturePreview" title=""/>
+                                                <img src="@routes.Application.getImage(user.photoId)" class="img-circle" id="wizardPicturePreview" title=""/>
                                             }else{
                                             	<img src="@routes.Assets.at("images/default-avatar.png")" class="img-circle" id="wizardPicturePreview" title=""/>
                                             }
@@ -160,20 +161,24 @@
                                         <div class="content">
                                             <div class="main">
                                                 @if(user.companyLogoId > 0){
-	                                                <img src="@routes.Profile.getImage(user.companyLogoId)"  style="width: 80px; height: 80px; margin-left: 32%;" class="picture-src" id="wizardPicturePreview" title=""/>
+	                                                <img src="@routes.Application.getImage(user.companyLogoId)"  style="width: 60px; height: 60px; margin-left: 35%;" class="picture-src" id="wizardPicturePreview" title=""/>
 	                                            }else{
 <!-- 	                                            	<img src="@routes.Assets.at("images/company-logo.png")" style="width: 80px; height: 80px; margin-left: 32%;" class="picture-src" id="wizardPicturePreview" title=""/> -->
 	                                            }
-                                                <h4 class="text-center">@user.companyName</h4>
-                                                <br/>
-                                                <p style="text-align: center;">@user.addressLn1 @user.addressLn2, @user.city, @user.state, @user.zip</p>
+                                                <h4 class="text-center" style="font-size: 16px; line-height:1em;">@user.companyName</h4>
+                                                
+                                                <p style="text-align: center; font-size: 14px;">@user.addressLn1 @user.addressLn2, @user.city, @user.state, @user.zip</p>
                                             </div>
                                         </div>
                                         <div class="footer">
                                             <div class="social-links text-center">
-                                                <a href="@user.facebook" class="facebook" target="_blank"><i class="fa fa-facebook fa-fw"></i></a>
-                                                <a href="@user.linkedIn" class="linkedin" target="_blank"><i class="fa fa-linkedin fa-fw"></i></a>
-                                                <a href="@user.twitter" class="twitter" target="_blank"><i class="fa fa-twitter fa-fw"></i></a>
+                                                @if(user.facebook != ""){
+                                                	<a href="@user.facebook" class="facebook" target="_blank"><i class="fa fa-facebook fa-fw"></i></a>
+                                                }@if(user.linkedIn != ""){
+                                                	<a href="@user.linkedIn" class="linkedin" target="_blank"><i class="fa fa-linkedin fa-fw"></i></a>
+                                                }@if(user.twitter != ""){
+                                                	<a href="@user.twitter" class="twitter" target="_blank"><i class="fa fa-twitter fa-fw"></i></a>
+                                                }
                                             </div>
                                         </div>
                                     </div> <!-- end back panel -->

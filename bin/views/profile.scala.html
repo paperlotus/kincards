@@ -77,6 +77,7 @@
 	                            </a>
 	                          <ul class="dropdown-menu">
 	                            <li><a href="@routes.Profile.getSettings()">Settings</a></li>
+	                            <li><a href="@routes.Application.getMyCard(session.get("userName"))">My KinCard</a></li>
 	                            <li><a href="@routes.Application.logout()">Sign Out</a></li>
 	                          </ul>
 	                    </li>
@@ -123,7 +124,7 @@
                                         <div class="tab-pane" id="about">
                                             <div class="row">
                                             	@if(flash.get("profile-error") != null && flash.get("profile-error") != "") {
-										            <div class="alert alert-warning alert-warning" style="opacity: 0.6; margin-left: 20%; margin-right : 20%; border-radius: 50px;">
+										            <div class="error alert alert-danger">
 										                <a href="#" class="close" data-dismiss="alert">&times;</a>
 										                	@flash.get("profile-error")
 										            </div>
@@ -133,7 +134,7 @@
                                                     <div class="picture-container">
                                                         <div class="picture">
                                                         @if(bob.photoId > 0){
-                                                            <img src="@routes.Profile.getImage(bob.photoId)" class="picture-src" id="wizardPicturePreview" title=""/>
+                                                            <img src="@routes.Application.getImage(bob.photoId)" class="picture-src" id="wizardPicturePreview" title=""/>
                                                         }else{
                                                         	<img src="@routes.Assets.at("images/default-avatar.png")" class="picture-src" id="wizardPicturePreview" title=""/>
                                                         }
@@ -143,6 +144,10 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
+                                                	<div class="form-group">
+                                                        <label for="exampleInputEmail1">User Name</label>
+                                                        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="" name="userName" value="@bob.userName" disabled="disabled">
+                                                    </div>
                                                     <div class="form-group">
                                                         <label for="exampleInputEmail1">First Name</label>
                                                         <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Andrew..." name="fName" value="@bob.fName">
@@ -179,7 +184,7 @@
                                                     <div class="picture-container">
                                                         <div class="picture">
                                                         @if(bob.companyLogoId > 0){
-                                                            <img src="@routes.Profile.getImage(bob.companyLogoId)" class="picture-src" id="wizardPicturePreview" title=""/>
+                                                            <img src="@routes.Application.getImage(bob.companyLogoId)" class="picture-src" id="wizardPicturePreview" title=""/>
                                                         }else{
                                                         	<img src="@routes.Assets.at("images/company-logo.png")" class="picture-src" id="wizardPicturePreview" title=""/>
                                                         }

@@ -28,87 +28,12 @@
     </head>
 
     <body>
-    <div id="navbar-full">
-	    <div id="navbar">
-	       <!--    
-	        navbar-default can be changed with navbar-ct-blue navbar-ct-azzure navbar-ct-red navbar-ct-green navbar-ct-orange  
-	        -->
-	        <nav class="navbar navbar-ct-orange navbar-fixed-top" role="navigation">
-	          
-	          <div class="container">
-	            <!-- Brand and toggle get grouped for better mobile display -->
-	            <div class="navbar-header">
-	              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-	                <span class="sr-only">Toggle navigation</span>
-	                <span class="icon-bar"></span>
-	                <span class="icon-bar"></span>
-	                <span class="icon-bar"></span>
-	              </button>
-					<div class="logo"><a href="@routes.Application.index()">
-						<img alt="logo" src="@routes.Assets.at("images/Klogo.png")">
-						</a>
-					</div>
-	            </div>
-	            <!-- Collect the nav links, forms, and other content for toggling -->
-	            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	              <ul class="nav navbar-nav navbar-right">
-<!-- 	                    <li> -->
-<!-- 	                        <a href="javascript:void(0);" data-toggle="search" class="hidden-xs"> -->
-<!-- 	                            <i class="pe-7s-search"></i> -->
-<!-- 	                            <p>Search</p> -->
-<!-- 	                        </a> -->
-<!-- 	                    </li> -->
-                      <li>
-                          <a href="@routes.Requests.addContact()">
-                              <i class="pe-7s-add-user">
-                              </i>
-                              <p id="addCont">Add Contact</p>
-                          </a>
-                      </li>
-	                    <li>
-	                        <a href="@routes.Requests.myRequests()">
-	                            <i class="pe-7s-mail">
-	                            </i>
-	                            <p id="my-req">Requests</p>
-	                        </a>
-	                    </li> 
-	                    <li class="dropdown">
-	                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-	                                <i class="pe-7s-user"></i>
-	                                <p>Account</p>
-	                            </a>
-	                          <ul class="dropdown-menu">
-	                            <li><a href="@routes.Profile.editProfile()">Profile</a></li>
-	                            <li><a href="@routes.Profile.getSettings()">Settings</a></li>
-	                            <li><a href="@routes.Application.getMyCard(session.get("userName"))">My KinCard</a></li>
-	                            <li><a href="@routes.Application.logout()">Sign Out</a></li>
-	                          </ul>
-	                    </li>
-	               </ul>
-<!-- 	               <form class="navbar-form navbar-right navbar-search-form" role="search">                   -->
-<!-- 	                 <div class="form-group"> -->
-<!-- 	                      <input type="text" value="" class="form-control" placeholder="Search..."> -->
-<!-- 	                 </div>  -->
-<!-- 	              </form> -->
-	              
-	            </div><!-- /.navbar-collapse -->
-	          </div><!-- /.container-fluid -->
-	        </nav>
-	    </div><!--  end navbar -->
-	
-	</div> <!-- end menu-dropdown -->
-	
+    	
         <div class="main">
 
                 <!--   Big container   -->
             <div class="container">
                 <div class="row">
-                    <h1 class="title">
-                        My Contacts
-                        <br>
-                        <small>Presenting your contacts in an interesting way!</small>
-                        <a href=""></a>
-                    </h1>
                     <div class="col-sm-10 col-sm-offset-1" id="cont">
 					@if(userList.size() > 0){
 	                	@for(user <- userList){
@@ -167,13 +92,13 @@
                                         </div>
                                         <div class="footer">
                                             <div class="social-links text-center">
-                                            	@if(user.facebook != ""){
+                                                @if(user.facebook != ""){
                                                 	<a href="@user.facebook" class="facebook" target="_blank"><i class="fa fa-facebook fa-fw"></i></a>
                                                 }@if(user.linkedIn != ""){
                                                 	<a href="@user.linkedIn" class="linkedin" target="_blank"><i class="fa fa-linkedin fa-fw"></i></a>
                                                 }@if(user.twitter != ""){
                                                 	<a href="@user.twitter" class="twitter" target="_blank"><i class="fa fa-twitter fa-fw"></i></a>
-                                                }	
+                                                }
                                             </div>
                                         </div>
                                     </div> <!-- end back panel -->
@@ -182,64 +107,18 @@
                         </div> <!-- end col sm 3 -->
                         }
                        }else{
-                       		<h1><small class="subtitle">You have No connections, yet. But don't get disheartened... Add your contacts <a href="@routes.Requests.addContact()">here.</a></small></h1>
+                       
+                       		<h1><small class="subtitle">Sorry we are not able to generate your KinCard at this moment.</small></h1>
                        }
+                       
 
                     </div> <!-- end col-sm-10 -->
                 </div> <!-- end row -->
-                <div class="space-200"></div>
+                <div class="row">
+                	<p style="margin-left:10%;"><small>Create your free virtual business card at <a href="http://kincards.com/login">KinCards.com</a></small></p>
+                </div>
             </div>
             </div> <!--  big container -->
-
-            
-	        <footer class="footer footer-black">
-	            <div class="container">
-	                <nav class="pull-left">
-	                    <ul>
-	                        <li>
-	                            <a href="http://www.kincards.com/dashboard">
-	                                Home
-	                            </a>
-	                        </li>
-	                        <li>
-	                            <a href="@routes.Application.company()">
-	                                Company
-	                            </a>
-	                        </li>
-	                        <li>
-	                            <a href="http://kincards.tumblr.com" target="_blank">
-	                               Blog
-	                            </a>
-	                        </li>
-	                        <li>
-	                            <a href="@routes.Profile.feedback()">
-	                               Feedback
-	                            </a>
-	                        </li>
-	                    </ul>
-	                </nav>
-					<div class="social-area pull-right"> 
-	                	<a href="http://kincards.tumblr.com/" target="_blank">
-	                        <i class="fa fa-tumblr-square"></i>
-	                    </a>               
-	                    <a href="https://www.facebook.com/pages/KinCards/1402887083373167" target="_blank">
-	                        <i class="fa fa-facebook-square"></i>
-	                    </a>
-	                    <a href="https://twitter.com/KinCards" target="_blank">
-	                        <i class="fa fa-twitter"></i>
-	                    </a>
-	                    <a href="https://www.linkedin.com/company/kincards" target="_blank">
-	                        <i class="fa fa-linkedin"></i>
-	                    </a>
-	                    <a href="https://google.com/+KincardsForBusiness" target="_blank">
-	                    	<i class="fa fa-google-plus"></i>
-	                    </a>
-	                </div>
-	                <div class="copyright">
-	                    &copy; 2015 KinCards
-	                </div>
-	            </div>
-	        </footer>
         </div>
     </body>
 
@@ -261,7 +140,6 @@
 
         function rotateCard(btn){
             var $card = $(btn).closest('.card-container');
-            console.log($card);
             if($card.hasClass('hover')){
                 $card.removeClass('hover');
             } else {

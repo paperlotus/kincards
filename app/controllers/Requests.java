@@ -39,15 +39,22 @@ public class Requests extends Controller {
     public static Result requestContact() throws URISyntaxException{
         //Add code to check if the contact exist in our system, if user already have access to this contact
     	DynamicForm requestData = Form.form().bindFromRequest();
-    	String phone = requestData.get("phone");
+    	String userName = requestData.get("userName");
     	String email = requestData.get("email");
     	String userEmail = session().get("email");
+    	String userUserName = session().get("userName");
     	String query = "";
     	String resp = "";
     	
-    	if (phone != null && phone != ""){
-			query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+userEmail+"\' and b.phone = \'"+phone+"\' CREATE (a)-[r:KNOWS]->(b) return r;";
-			resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+    	if (userName != null && userName != ""){
+    		boolean isConnected = checkConnectionStatusByUserName(userName, userUserName);
+    		if(isConnected){
+    			flash("request-error", "You are already connected.");
+    			return ok(contact.render());
+    		}else{
+    			query = "MATCH (a:Account), (b:Account) WHERE a.userName = \'"+userUserName+"\' and b.userName = \'"+userName+"\' CREATE (a)-[r:KNOWS]->(b) return r;";
+    			resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+    		}
     	}else if(email != null && !email.equals("")){
     		boolean isConnected = checkConnectionStatus(email, userEmail);
     		if(isConnected){
@@ -58,7 +65,7 @@ public class Requests extends Controller {
 	    		resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
     		}
     	}else{
-    		flash("request-error", "Please enter either Phone Number or Email.");
+    		flash("request-error", "Please enter either User Name or Email.");
     		return ok(contact.render());
     	}
         if(resp != null && resp != ""){
@@ -68,32 +75,30 @@ public class Requests extends Controller {
 				String subject = "KinCards Connection Request";
 				String body = session().get("email")+" would like to add you to their KinCards. Please take necessary action.";
 				if (results.size() > 0){
-					if(!email.equals("") && email != null){
-						EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
-					}else if(phone != "" && phone != null){
-						query ="MATCH (n{phone:\'"+phone+"\'}) return n.email;";
-						resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
-											
-						json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
-						results = (ArrayNode)json;
-						
-			            Iterator<JsonNode> it = results.iterator();
-			            while (it.hasNext()) {
-			            	User user = new User();
-			            	JsonNode node  = it.next();
-			            	user.email = node.get("row").get(0).asText();
-			            	EmailHelper.sendEmail(user.email, subject, body, "forgotPassword.ftl");
-			            }
+					if(email == null || email.equals("")){
+						query = "Match (a:Account) where a.userName = \'"+userName+"\' return a.email;";
+		    			resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+		    			JsonNode json1 = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+						ArrayNode results1 = (ArrayNode)json1;
+						if(results1.size()>0){
+							Iterator<JsonNode> it = results1.iterator();
+					        while (it.hasNext()) {
+					        	JsonNode node  = it.next();
+					        	email = node.get("row").get(0).asText();
+					        }
+						}
 					}
+					EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 					flash("request-error", "Request sent");
 				}else{
 					if(!email.equals("") && email != null){
 						body = session().get("email")+" would like to add you to their KinCards. Kincards is a great way to share, and manage contacts. <a href=\"http://kincards.com/login\">Try us now.</a>";
 						EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
+						flash("request-error", "Unfortunately, your contact has not joined KinCards yet. We have told your contact that you are missing them here.");
 					}else{
-						System.out.println("email is null??");
+						flash("request-error", "We couldn't find any KinCards user with that user name. Are you sure you typed the correct user name?");
 					}
-					flash("request-error", "Unfortunately, your contact has not joined KinCards yet. We have told your contact that you are missing them here.");
+					
 				}
 				
 			} catch (JsonProcessingException e) {
@@ -166,6 +171,27 @@ public class Requests extends Controller {
 		
 		return false;
 	}
+	
+	private static boolean checkConnectionStatusByUserName(String userName, String userUserName) {
+		String query = "MATCH (a { userName:\'"+userName+"\' })-[r]-(b {userName: \'"+userUserName+"\'}) RETURN r";
+		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+		
+		try {
+			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+			ArrayNode results = (ArrayNode)json;
+			if (results.size() > 0){
+				return true;
+			}
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
 
 	public static Result addContact(){
         return ok(contact.render());
@@ -188,6 +214,7 @@ public class Requests extends Controller {
             while (it.hasNext()) {
             	User user = new User();
             	JsonNode node  = it.next();
+            	user.userName = node.get("row").findPath("userName").asText();
             	user.phone = node.get("row").findPath("phone").asText();
             	user.addressLn1 = node.get("row").findPath("addressLn1").asText();
             	user.addressLn2 = node.get("row").findPath("addressLn2").asText();
@@ -199,7 +226,7 @@ public class Requests extends Controller {
             	user.facebook = node.get("row").findPath("facebook").asText();
             	user.fax = node.get("row").findPath("fax").asLong();
             	user.fName = node.get("row").findPath("fName").asText();
-            	user.linkedIn = node.get("row").findPath("linkedin").asText();
+            	user.linkedIn = node.get("row").findPath("linkedIn").asText();
             	user.lName = node.get("row").findPath("lName").asText();
             	user.photoId = node.get("row").findPath("photoId").asLong();
             	user.state = node.get("row").findPath("state").asText();
@@ -286,8 +313,8 @@ public static Result rejectRequest(String email){
 		return ok();
 	}
 	
-	public static Result emailContact(String targetEmail, String email){
-		File file = VCFHelper.createVCF(targetEmail);
+	public static Result emailContact(String userName, String email){
+		File file = VCFHelper.createVCF(userName);
 		String fileName = file.getAbsolutePath();
 		String userEmail = session().get("email");
 		String subject = userEmail+" has shared a KinCard with you.";
@@ -296,8 +323,8 @@ public static Result rejectRequest(String email){
 		return ok("Email Sent");
 	}
 	
-	public static Result shareContact(String userEmail, String email){
-		String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+userEmail+"\' and (b.email = \'"+email+"\' or b.phone = \'"+email+"\') CREATE (a)-[r:KNOWS]->(b) return b.email, a.email;";
+	public static Result shareContact(String userName, String email){
+		String query = "MATCH (a:Account), (b:Account) WHERE a.userName = \'"+userName+"\' and (b.email = \'"+email+"\' or b.phone = \'"+email+"\') CREATE (a)-[r:KNOWS]->(b) return b.email, a.email;";
 		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		try{
 			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
@@ -329,9 +356,9 @@ public static Result rejectRequest(String email){
 	
 	public static Result mergeContacts(){
 		DynamicForm requestData = Form.form().bindFromRequest();
-    	String email = requestData.get("email");
+    	String userName = requestData.get("userName");
     	String pin = requestData.get("pin");
-    	String query = "MATCH (a)-[r:CONNECTED]-(b) WHERE a.email = \'"+email+"\' AND a.pin="+pin+" RETURN b.phone";
+    	String query = "MATCH (a)-[r:CONNECTED]-(b) WHERE a.userName = \'"+userName+"\' AND a.pin="+pin+" RETURN b.userName";
 		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		try{
 			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
@@ -340,8 +367,8 @@ public static Result rejectRequest(String email){
 			
             while (it.hasNext()) {
             	JsonNode node  = it.next();
-				String destPhone = node.get("row").get(0).asText();				
-				query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+email+"\' and b.phone = \'"+destPhone+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
+				String destUserName = node.get("row").get(0).asText();				
+				query = "MATCH (a:Account), (b:Account) WHERE a.userName = \'"+userName+"\' and b.userName = \'"+destUserName+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
 		        resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);	
             }
 		}

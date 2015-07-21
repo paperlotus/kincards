@@ -43,6 +43,7 @@ public class Dashboard extends Controller{
             while (it.hasNext()) {
             	User user = new User();
             	JsonNode node  = it.next();
+            	user.userName = node.get("row").findPath("userName").asText();
             	user.phone = node.get("row").findPath("phone").asText();
             	user.phone2 = node.get("row").findPath("phone2").asText();
             	user.addressLn1 = node.get("row").findPath("addressLn1").asText();
@@ -55,7 +56,7 @@ public class Dashboard extends Controller{
             	user.facebook = node.get("row").findPath("facebook").asText();
             	user.fax = node.get("row").findPath("fax").asLong();
             	user.fName = node.get("row").findPath("fName").asText();
-            	user.linkedIn = node.get("row").findPath("linkedin").asText();
+            	user.linkedIn = node.get("row").findPath("linkedIn").asText();
             	user.lName = node.get("row").findPath("lName").asText();
             	user.photoId = node.get("row").findPath("photoId").asLong();
             	user.state = node.get("row").findPath("state").asText();
@@ -76,8 +77,8 @@ public class Dashboard extends Controller{
         return ok(dashboard.render(userList));
     }
 	
-	public static Result exportVCF(String phone){
-		File file = VCFHelper.createVCF(phone);
+	public static Result exportVCF(String userName){
+		File file = VCFHelper.createVCF(userName);
 		return ok(file);
 	}
 

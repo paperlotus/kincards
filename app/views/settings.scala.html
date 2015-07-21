@@ -76,6 +76,7 @@
 	                            </a>
 	                          <ul class="dropdown-menu">
 	                            <li><a href="@routes.Profile.editProfile()">Profile</a></li>
+	                            <li><a href="@routes.Application.getMyCard(session.get("userName"))">My KinCard</a></li>
 	                            <li><a href="@routes.Application.logout()">Sign Out</a></li>
 	                          </ul>
 	                    </li>
@@ -108,10 +109,25 @@
                                        </h3>
                                    </div>
                                    <ul>
+                                   	   <li><a href="#profile" data-toggle="tab">KinCard Code</a></li>
                                        <li><a href="#about" data-toggle="tab">Change Password</a></li>
                                        <li><a href="#delete" data-toggle="tab">Delete Profile</a></li>
                                    </ul>
                                    <div class="tab-content">
+                                   		<div class="tab-pane" id="profile">
+                                            <div class="row">
+                                                <div class="col-sm-3"></div>
+                                                
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Copy paste following code to your blog/website's page html to add your KinCard:</label>
+                                                        <br/>
+                                                        <br/><br/>
+                                                        &lt;iframe src=&quot;http://www.kincards.com/mycard/@session.get("userName")&quot;  width=&quot;350&quot; height=&quot;450&quot; scrolling=&quot;no&quot; frameborder="0"&gt;&lt;/iframe&gt;
+                                                    </div>
+                                                </div>
+                                            </div>
+	                                   </div>
 	                                   <div class="tab-pane" id="about">
 	                                        <form action="@routes.Profile.updateSettings()" method="post" name="profileForm">
 	                                            <div class="row">
@@ -130,7 +146,7 @@
 	                                        </form>
 	                                   </div>
                                         @if(flash.get("pin") != null && flash.get("pin") != "") {
-								            <div class="alert alert-warning alert-warning" style="opacity: 0.6; margin-left: 20%; margin-right : 20%; border-radius: 50px;">
+								            <div class="error alert alert-danger">
 								                <a href="#" class="close" data-dismiss="alert">&times;</a>
 								                @flash.get("pin")
 								            </div>

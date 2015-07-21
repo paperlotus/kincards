@@ -127,11 +127,13 @@ public class Profile extends Controller{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        User bob = User.findByPhone(phone);
-        List<Country> countryList = new ArrayList<Country>();
-        countryList = CountryHelper.getCountryList();
+//        User bob = User.findByPhone(phone);
+//        List<Country> countryList = new ArrayList<Country>();
+//        countryList = CountryHelper.getCountryList();
         
-        return ok(profile.render(bob, countryList));
+        return redirect(
+                routes.Dashboard.contacts()
+        );
     }
 
 	private static long upload(String name) {
@@ -178,21 +180,6 @@ public class Profile extends Controller{
 		EmailHelper.sendEmail("info@kincards.com", subject, body, "forgotPassword.ftl");
 		return ok(feedback.render());
 	}
-	
-	public static Result getImage(long id) {
-        Image image = Image.find.byId(id);
-        
-        if (image != null) {
-            
-            /*** here happens the magic ***/
-            return ok(image.data).as("image");
-            /************************** ***/
-            
-        } else {
-            flash("profile-error", "Picture not found.");
-            return redirect(routes.Profile.editProfile());
-        }
-    }
 	
 	public static Result deleteProfile(){
 		DynamicForm requestData = Form.form().bindFromRequest();

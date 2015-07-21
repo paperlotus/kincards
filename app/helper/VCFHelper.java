@@ -18,8 +18,8 @@ import ezvcard.property.StructuredName;
 
 public class VCFHelper {
 
-	public static File createVCF(String targetEmail) {
-		String query = "MATCH (n {email : \'"+targetEmail+"\'}) RETURN n;";
+	public static File createVCF(String userName) {
+		String query = "MATCH (n {userName : \'"+userName+"\'}) RETURN n;";
 		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		File file = null;
 		try{
@@ -41,7 +41,7 @@ public class VCFHelper {
             	user.facebook = node.get("row").findPath("facebook").asText();
             	user.fax = node.get("row").findPath("fax").asLong();
             	user.fName = node.get("row").findPath("fName").asText();
-            	user.linkedIn = node.get("row").findPath("linkedin").asText();
+            	user.linkedIn = node.get("row").findPath("linkedIn").asText();
             	user.lName = node.get("row").findPath("lName").asText();
             	user.photoId = node.get("row").findPath("photoId").asLong();
             	user.state = node.get("row").findPath("state").asText();
