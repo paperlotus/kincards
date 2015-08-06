@@ -40,6 +40,7 @@ public class User extends Model {
     public long companyLogoId;
     public boolean active;
     public String country;
+    public String privacy;
     
     public static User findUser(String email, String pin){
     	String query = "MATCH (ee:Account) WHERE ee.email = \'"+email+"\' and ee.pin = \'"+pin+"\' RETURN ee;";
@@ -77,6 +78,7 @@ public class User extends Model {
                 user.zip = node.get("row").findPath("zip").asLong();
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
+                user.privacy = node.get("row").findPath("privacy").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -125,6 +127,7 @@ public class User extends Model {
                 user.zip = node.get("row").findPath("zip").asLong();
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
+                user.privacy = node.get("row").findPath("privacy").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -174,6 +177,7 @@ public class User extends Model {
                 user.zip = node.get("row").findPath("zip").asLong();
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
+                user.privacy = node.get("row").findPath("privacy").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -223,6 +227,7 @@ public class User extends Model {
                 user.zip = node.get("row").findPath("zip").asLong();
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
+                user.privacy = node.get("row").findPath("privacy").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -272,6 +277,7 @@ public static User findByUserName(String userName){
                 user.zip = node.get("row").findPath("zip").asLong();
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
+                user.privacy = node.get("row").findPath("privacy").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -283,9 +289,59 @@ public static User findByUserName(String userName){
 		}
 		return user;
     }
+
+public static User findByEmailorUserName(String userName){
+	
+	String query = "MATCH (ee:Account) WHERE ee.userName = \'"+userName+"\' or ee.email = \'"+userName+"\' RETURN ee;";
+    String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+    User user = new User();
+    
+    try {
+		JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+		ArrayNode results = (ArrayNode)json;
+		
+        Iterator<JsonNode> it = results.iterator();
+        while (it.hasNext()) {
+        	JsonNode node  = it.next();
+        	
+        	user.userName = node.get("row").findPath("userName").asText();
+        	user.phone = node.get("row").findPath("phone").asText();
+        	user.phone2 = node.get("row").findPath("phone2").asText();
+            user.pin = node.get("row").findPath("pin").asText();
+            user.addressLn1 = node.get("row").findPath("addressLn1").asText();
+            user.addressLn2 = node.get("row").findPath("addressLn2").asText();
+            user.city = node.get("row").findPath("city").asText();
+            user.companyLogoId = node.get("row").findPath("companyLogoId").asLong();
+            user.companyName = node.get("row").findPath("companyName").asText();
+            user.designation = node.get("row").findPath("designation").asText();
+            user.email = node.get("row").findPath("email").asText();
+            user.facebook = node.get("row").findPath("facebook").asText();
+            user.fax = node.get("row").findPath("fax").asLong();
+            user.fName = node.get("row").findPath("fName").asText();
+            user.linkedIn = node.get("row").findPath("linkedIn").asText();
+            user.lName = node.get("row").findPath("lName").asText();
+            user.photoId = node.get("row").findPath("photoId").asLong();
+            user.state = node.get("row").findPath("state").asText();
+            user.twitter = node.get("row").findPath("twitter").asText();
+            user.website = node.get("row").findPath("website").asText();
+            user.zip = node.get("row").findPath("zip").asLong();
+            user.active = node.get("row").findPath("active").asBoolean();
+            user.country = node.get("row").findPath("country").asText();
+            user.privacy = node.get("row").findPath("privacy").asText();
+        }				
+		
+	} catch (JsonProcessingException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return user;
+}
     
     public static User createUser(String email, String userName, String pin){
-    	String query = "CREATE (n:Account {email : \'"+email+"\' , userName : \'"+userName+"\' , pin : \'"+pin+"\', createDate : \'"+new Date()+"\' , active : true }) RETURN n;";
+    	String query = "CREATE (n:Account {email : \'"+email+"\' , userName : \'"+userName+"\' , pin : \'"+pin+"\', createDate : \'"+new Date()+"\' , active : true, privacy : 'off' }) RETURN n;";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         User user = new User();
         

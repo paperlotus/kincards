@@ -9,11 +9,14 @@ import views.html.*;
 import models.*;
 import helper.CreateSimpleGraph;
 import helper.EmailHelper;
+import helper.PasswordHash;
 import helper.VCFHelper;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,8 +44,10 @@ public class Requests extends Controller {
     	DynamicForm requestData = Form.form().bindFromRequest();
     	String userName = requestData.get("userName");
     	String email = requestData.get("email");
+    	String phone = requestData.get("phone");
     	String userEmail = session().get("email");
     	String userUserName = session().get("userName");
+    	
     	String query = "";
     	String resp = "";
     	
@@ -64,8 +69,17 @@ public class Requests extends Controller {
 	    		query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+userEmail+"\' and b.email = \'"+email+"\' CREATE (a)-[r:KNOWS]->(b) return r;";
 	    		resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
     		}
+    	}else if (phone != null && phone != ""){
+//    		boolean isConnected = checkConnectionStatusByUserName(phone, userUserName);
+//    		if(isConnected){
+//    			flash("request-error", "You are already connected.");
+//    			return ok(contact.render());
+//    		}else{
+    			query = "MATCH (a:Account), (b:Account) WHERE a.userName = \'"+userUserName+"\' and b.phone = \'"+phone+"\' CREATE (a)-[r:KNOWS]->(b) return r;";
+    			resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+//    		}
     	}else{
-    		flash("request-error", "Please enter either User Name or Email.");
+    		flash("request-error", "Please enter User Name or Email or Phone number.");
     		return ok(contact.render());
     	}
         if(resp != null && resp != ""){
@@ -73,7 +87,7 @@ public class Requests extends Controller {
 				JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
 				ArrayNode results = (ArrayNode)json;
 				String subject = "KinCards Connection Request";
-				String body = session().get("email")+" would like to add you to their KinCards. Please take necessary action.";
+				String body = session().get("email")+" would like to add you to their KinCards. Please take necessary action <a href=\"http://kincards.com/myRequests\">here</a>.";
 				if (results.size() > 0){
 					if(email == null || email.equals("")){
 						query = "Match (a:Account) where a.userName = \'"+userName+"\' return a.email;";
@@ -95,8 +109,12 @@ public class Requests extends Controller {
 						body = session().get("email")+" would like to add you to their KinCards. Kincards is a great way to share, and manage contacts. <a href=\"http://kincards.com/login\">Try us now.</a>";
 						EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 						flash("request-error", "Unfortunately, your contact has not joined KinCards yet. We have told your contact that you are missing them here.");
-					}else{
-						flash("request-error", "We couldn't find any KinCards user with that user name. Are you sure you typed the correct user name?");
+					}else {
+						if(!phone.equals("") && phone != null){
+							flash("request-error", "We couldn't find any KinCards user with that phone number. Are you sure you typed the correct phone number?");
+						}else{
+							flash("request-error", "We couldn't find any KinCards user with that user name. Are you sure you typed the correct user name?");
+						}
 					}
 					
 				}
@@ -354,31 +372,63 @@ public static Result rejectRequest(String email){
 		return ok();
 	}
 	
-	public static Result mergeContacts(){
+	public static Result mergeContacts() throws NoSuchAlgorithmException, InvalidKeySpecException{
 		DynamicForm requestData = Form.form().bindFromRequest();
     	String userName = requestData.get("userName");
     	String pin = requestData.get("pin");
-    	String query = "MATCH (a)-[r:CONNECTED]-(b) WHERE a.userName = \'"+userName+"\' AND a.pin="+pin+" RETURN b.userName";
-		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
-		try{
-			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
-			ArrayNode results = (ArrayNode)json;
-			Iterator<JsonNode> it = results.iterator();
-			
-            while (it.hasNext()) {
-            	JsonNode node  = it.next();
-				String destUserName = node.get("row").get(0).asText();				
-				query = "MATCH (a:Account), (b:Account) WHERE a.userName = \'"+userName+"\' and b.userName = \'"+destUserName+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
-		        resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);	
-            }
-		}
-		catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ok(contact.render());
+    	//Pin Validation code
+    	User user = User.findByUserName(userName);
+    	if(user != null && user.email != null & !user.email.equals("")){
+    		if(PasswordHash.validatePassword(pin, user.pin)){
+    			String query = "MATCH (a)-[r:CONNECTED]-(b) WHERE a.userName = \'"+userName+"\' AND a.pin="+pin+" RETURN b.userName";
+    			String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+    			try{
+    				JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+    				ArrayNode results = (ArrayNode)json;
+    				Iterator<JsonNode> it = results.iterator();
+    				
+    	            while (it.hasNext()) {
+    	            	JsonNode node  = it.next();
+    					String destUserName = node.get("row").get(0).asText();				
+    					query = "MATCH (a:Account), (b:Account) WHERE a.userName = \'"+userName+"\' and b.userName = \'"+destUserName+"\' CREATE (a)-[r:CONNECTED]->(b) return a.email;";
+    			        resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);	
+    	            }
+    			}
+    			catch (JsonProcessingException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    		}
+    	}
+    	
+    	return redirect(
+                routes.Profile.getSettings()
+        );
+	}
+	
+	public static Result addKinCard(String userName){
+		System.out.println("userName="+userName);
+		String userUserName = session().get("userName");
+    	
+    	String query = "";
+    	String resp = "";
+    	
+    	if (userName != null && userName != ""){
+    		boolean isConnected = checkConnectionStatusByUserName(userName, userUserName);
+    		if(isConnected){
+    			flash("request-error", "You are already connected.");
+    			return ok(contact.render());
+    		}else{
+    			query = "MATCH (a:Account), (b:Account) WHERE a.userName = \'"+userUserName+"\' and b.userName = \'"+userName+"\' CREATE (a)-[r:KNOWS]->(b) return r;";
+    			resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+    			flash("request-error", "Connection Request Sent.");
+    		}
+    	}else{
+    		flash("request-error", "Something went wrong. Please try again.");
+    	}
+		return ok();
 	}
 }

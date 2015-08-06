@@ -3,8 +3,11 @@ package controllers;
 import helper.CountryHelper;
 import helper.CreateSimpleGraph;
 import helper.EmailHelper;
+import helper.PasswordHash;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -66,25 +69,35 @@ public class Application extends Controller {
         }
     }
     
-    public static Result authentication() {
+    public static Result authentication() throws NoSuchAlgorithmException, InvalidKeySpecException {
     DynamicForm requestData = Form.form().bindFromRequest();
     String userName = requestData.get("userName");
     String password = requestData.get("password");
+    
   	userName = formatUserName(userName);
-  	User user = User.findUserByUserName(userName, password);
+  	
+  	User user = User.findByEmailorUserName(userName);
   	if(user == null || user.email == null || user.email.equals("")){
-  		flash("login-error", "We are not able to find account with supplied user name/password.");
+  		flash("login-error", "User name does not exist.");
   		return redirect(
                routes.Application.login()
         );
   	}else {
+  		String hash = user.pin;
+  		if(PasswordHash.validatePassword(password, hash)){
           session().clear();
           session("email", user.email);
           session("userName", user.userName);
           return redirect(
                   routes.Dashboard.contacts()
           );
+      }else{
+    	  flash("login-error", "This doesn't seem to be the correct password.");
+    		return redirect(
+                 routes.Application.login()
+          );
       }
+  	}
   }
 
     public static Result login(){
@@ -136,12 +149,15 @@ public class Application extends Controller {
         );
     }
     
-    public static Result registration() {
+    public static Result registration() throws NoSuchAlgorithmException, InvalidKeySpecException {
     	DynamicForm requestData = Form.form().bindFromRequest();
         String userName = requestData.get("userName");
         String pin = requestData.get("password");
         String email = requestData.get("email");
-    	userName = formatUserName(userName);
+    	
+        userName = formatUserName(userName);
+    	pin = PasswordHash.createHash(pin);
+    	
         if(userName != null && !userName.equals("") && pin != null && !pin.equals("") && email != null && !email.equals("")){
         	User bob = User.findByEmail(email);
 	        if(bob != null && bob.email != null){
@@ -162,7 +178,7 @@ public class Application extends Controller {
 		            session("userName", userName);
 		            bob = User.createUser(email, userName, pin);
 		            String subject = "Welcome to KinCards";
-		            String body = "Friend, Welcome to KinCards. You've just joined a community who have discoved how easy and efficient is to share contacts.<br/>You can use your KinCard url: http://kincards.com/mycard/"+userName+" to easily share your contacts with others.<br/><br/> Thank you for joining us.";
+		            String body = "Friend, Welcome to KinCards. You've just joined a community who have discoved how easy and efficient is to share contacts.<br/>You can use your KinCard url: http://kincards.com/mycard/"+userName+" to easily share your contacts with others. You can anytime access/share your KinCard with other KinCards user by your user name: "+userName+" , or following url: <a href=\"htp://kincards.com/mycard/"+userName+"\">htp://kincards.com/mycard/"+userName+"</a> <br/><br/> Thank you for joining us.";
 		            EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 		        }
 	        }
@@ -182,33 +198,23 @@ public class Application extends Controller {
     }
     
     
-    public static Result recoverPassword(){
+    public static Result recoverPassword() throws Exception{
     	DynamicForm requestData = Form.form().bindFromRequest();
         String userName = requestData.get("userName");
-        String query = "MATCH (n {userName : \'"+userName+"\'}) RETURN n.pin, n.email;";
-		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+        
+        User user = User.findByEmailorUserName(userName);
 		String subject = "Your KinCards Password";
-		String pin = "";
-		try{
-			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
-			ArrayNode results = (ArrayNode)json;
-			json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
-			results = (ArrayNode)json;
-			if (results.size() > 0){
-		        Iterator<JsonNode> it = results.iterator();
-		        while (it.hasNext()) {
-		        	JsonNode node  = it.next();
-		        	pin = node.get("row").get(0).asText();
-		        	String email = pin = node.get("row").get(1).asText();
-		        	String body = "You asked for your KinCards password. Here it is: "+pin;
-		        	EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
-		        }
-			}else{
+		String newPassword = generateRandomString();
+		String hash = PasswordHash.createHash(newPassword);
+		String body = "You asked for your KinCards password. Here is a temporary password that would allow you to login to KinCards: "+newPassword+" <br/> By the way, you do remember your username... don't you "+user.userName;
+		if(user != null && user.email != null && user.email != ""){
+			EmailHelper.sendEmail(user.email, subject, body, "forgotPassword.ftl");
+			String query = "MATCH (n {userName : \'"+userName+"\' and email : \'"+user.email+"\'}) set n.pin = \'"+hash+"\' RETURN n.email;";
+			String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+		}else{
 				flash("pin", "We are not able to find your account with this email address. Why don't you try creating an account using this email.");
 			}
-		}catch (Exception e){
-			e.printStackTrace();
-		}
+    
     	return ok(forgotPassword.render());
     }
     
@@ -297,6 +303,7 @@ public class Application extends Controller {
             	user.twitter = node.get("row").findPath("twitter").asText();
             	user.website = node.get("row").findPath("website").asText();
             	user.zip = node.get("row").findPath("zip").asLong();
+            	user.privacy = node.get("row").findPath("privacy").asText();
             	userList.add(user);
             }				
 			
@@ -362,4 +369,70 @@ public class Application extends Controller {
 		
 		return ok();
 	}
+	
+	public static String generateRandomString() throws Exception {
+
+		StringBuffer buffer = new StringBuffer();
+		String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		int charactersLength = characters.length();
+
+		for (int i = 0; i < 8; i++) {
+			double index = Math.random() * charactersLength;
+			buffer.append(characters.charAt((int) index));
+		}
+		return buffer.toString();
+	}
+	
+	public static Result search(){
+		DynamicForm requestData = Form.form().bindFromRequest();
+		String search = requestData.get("search");
+		System.out.println("search..."+search);
+		String query = "MATCH (a:Account) where a.userName=\'"+search+"\' or a.email=\'"+search+"\' or a.fName=\'"+search+"\' or a.lName=\'"+search+"\' or a.phone=\'"+search+"\' or a.companyName=\'"+search+"\'  RETURN a";
+        String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+        
+        List<User> userList = new ArrayList<User>();
+        
+        try {
+			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+			ArrayNode results = (ArrayNode)json;
+			
+			Iterator<JsonNode> it = results.iterator();
+            while (it.hasNext()) {
+            	User user = new User();
+            	JsonNode node  = it.next();
+            	user.userName = node.get("row").findPath("userName").asText();
+            	user.phone = node.get("row").findPath("phone").asText();
+            	user.phone2 = node.get("row").findPath("phone2").asText();
+            	user.addressLn1 = node.get("row").findPath("addressLn1").asText();
+            	user.addressLn2 = node.get("row").findPath("addressLn2").asText();
+            	user.city = node.get("row").findPath("city").asText();
+            	user.companyLogoId = node.get("row").findPath("companyLogoId").asLong();
+            	user.companyName = node.get("row").findPath("companyName").asText();
+            	user.designation = node.get("row").findPath("designation").asText();
+            	user.email = node.get("row").findPath("email").asText();
+            	user.facebook = node.get("row").findPath("facebook").asText();
+            	user.fax = node.get("row").findPath("fax").asLong();
+            	user.fName = node.get("row").findPath("fName").asText();
+            	user.linkedIn = node.get("row").findPath("linkedIn").asText();
+            	user.lName = node.get("row").findPath("lName").asText();
+            	user.photoId = node.get("row").findPath("photoId").asLong();
+            	user.state = node.get("row").findPath("state").asText();
+            	user.twitter = node.get("row").findPath("twitter").asText();
+            	user.website = node.get("row").findPath("website").asText();
+            	user.zip = node.get("row").findPath("zip").asLong();
+            	user.privacy = node.get("row").findPath("privacy").asText();
+            	userList.add(user);
+            }				
+			
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ok(searchResults.render(userList));
+	}
+	
+	
 }

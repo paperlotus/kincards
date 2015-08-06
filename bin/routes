@@ -15,6 +15,7 @@ GET     /profile                    controllers.Profile.editProfile()
 POST    /profile	                controllers.Profile.updateProfile()
 GET     /addContact                 controllers.Requests.addContact()
 POST    /addContact	                controllers.Requests.requestContact()
+POST    /addKinCard/:userName	    controllers.Requests.addKinCard(userName: String)
 POST    /mergeContact	            controllers.Requests.mergeContacts()
 POST    /uploadContact	            controllers.Requests.uploadContact()
 GET		/myRequests					controllers.Requests.myRequests()
@@ -40,7 +41,10 @@ POST	/share/:ph/:email			controllers.Requests.shareContact(ph:String, email:Stri
 GET		/business					controllers.Application.business()
 GET 	/social						controllers.Application.socialConnections()
 GET		/mycard/:user				controllers.Application.getMyCard(user: String)
+GET		/myKinCard/:user			controllers.Profile.getMyCard(user: String)
 GET		/mkt						controllers.Application.mktEmails()
+POST	/update						controllers.Profile.updatePublicSettings()
+POST	/search						controllers.Application.search()
 
 #Twitter Authentication
 GET     /twitter/homeTimeline controllers.Twitter.homeTimeline()

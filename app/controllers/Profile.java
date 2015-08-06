@@ -127,9 +127,6 @@ public class Profile extends Controller{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//        User bob = User.findByPhone(phone);
-//        List<Country> countryList = new ArrayList<Country>();
-//        countryList = CountryHelper.getCountryList();
         
         return redirect(
                 routes.Dashboard.contacts()
@@ -151,8 +148,22 @@ public class Profile extends Controller{
 	    }
 	}
 	
-	public static Result getSettings(){
-		return ok(settings.render());
+	public static Result getSettings() throws JsonProcessingException, IOException{
+		String query = "MATCH (p:Account) where p.email=\'"+session().get("email")+"\' return p.privacy;";
+		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+		JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+		ArrayNode results = (ArrayNode)json;
+		Boolean privacy = false;
+		if(results.size()>0){
+			Iterator<JsonNode> it = results.iterator();
+	        while (it.hasNext()) {
+	        	JsonNode node  = it.next();
+	        	if(node.get("row").get(0).asText().equalsIgnoreCase("on")){
+	        		privacy = true;
+	        	}
+	        }
+		}
+		return ok(settings.render(privacy));
 	}
 	
 	public static Result updateSettings(){
@@ -164,7 +175,9 @@ public class Profile extends Controller{
 		CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		flash("pin", "Successfully updated your password");
 		
-		return ok(settings.render());
+		return redirect(
+                routes.Profile.getSettings()
+        );
 	}
 	
 	public static Result feedback(){
@@ -194,7 +207,91 @@ public class Profile extends Controller{
 	        );
 		}else{
 			flash("pin", "Do you really want to DELETE your Profile? Try typing the correct text again.");
-			return ok(settings.render());
+			return redirect(
+	                routes.Profile.getSettings()
+	        );
 		}
+	}
+	
+	public static Result updatePublicSettings(){
+		
+		DynamicForm requestData = Form.form().bindFromRequest();
+		String pub = requestData.get("public");
+		if(pub != null && !pub.equals("")){
+			String query = "MATCH (p:Account) where p.email=\'"+session().get("email")+"\' set p.privacy = 'on' return p;";
+			CreateSimpleGraph.sendTransactionalCypherQuery(query);
+		}else{
+			String query = "MATCH (p:Account) where p.email=\'"+session().get("email")+"\' set p.privacy = 'off' return p;";
+			CreateSimpleGraph.sendTransactionalCypherQuery(query);
+		}
+		
+		return redirect(
+                routes.Profile.getMyCard(session().get("userName"))
+        );
+	}
+	
+	public static Result getMyCard(String userName) throws JsonProcessingException, IOException{
+		userName = userName.replaceAll("\\s+","").toLowerCase();
+		
+    	String query = "MATCH (a:Account) where a.userName=\'"+userName+"\' RETURN a";
+        String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+        
+        List<User> userList = new ArrayList<User>();
+        
+        try {
+			JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+			ArrayNode results = (ArrayNode)json;
+			
+			Iterator<JsonNode> it = results.iterator();
+            while (it.hasNext()) {
+            	User user = new User();
+            	JsonNode node  = it.next();
+            	user.userName = node.get("row").findPath("userName").asText();
+            	user.phone = node.get("row").findPath("phone").asText();
+            	user.phone2 = node.get("row").findPath("phone2").asText();
+            	user.addressLn1 = node.get("row").findPath("addressLn1").asText();
+            	user.addressLn2 = node.get("row").findPath("addressLn2").asText();
+            	user.city = node.get("row").findPath("city").asText();
+            	user.companyLogoId = node.get("row").findPath("companyLogoId").asLong();
+            	user.companyName = node.get("row").findPath("companyName").asText();
+            	user.designation = node.get("row").findPath("designation").asText();
+            	user.email = node.get("row").findPath("email").asText();
+            	user.facebook = node.get("row").findPath("facebook").asText();
+            	user.fax = node.get("row").findPath("fax").asLong();
+            	user.fName = node.get("row").findPath("fName").asText();
+            	user.linkedIn = node.get("row").findPath("linkedIn").asText();
+            	user.lName = node.get("row").findPath("lName").asText();
+            	user.photoId = node.get("row").findPath("photoId").asLong();
+            	user.state = node.get("row").findPath("state").asText();
+            	user.twitter = node.get("row").findPath("twitter").asText();
+            	user.website = node.get("row").findPath("website").asText();
+            	user.zip = node.get("row").findPath("zip").asLong();
+            	user.privacy = node.get("row").findPath("privacy").asText();
+            	userList.add(user);
+            }				
+			
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        String query1 = "MATCH (p:Account) where p.email=\'"+session().get("email")+"\' return p.privacy;";
+		String resp1 = CreateSimpleGraph.sendTransactionalCypherQuery(query1);
+		JsonNode json = new ObjectMapper().readTree(resp1).findPath("results").findPath("data");
+		ArrayNode results = (ArrayNode)json;
+		Boolean privacy = false;
+		if(results.size()>0){
+			Iterator<JsonNode> it = results.iterator();
+	        while (it.hasNext()) {
+	        	JsonNode node  = it.next();
+	        	if(node.get("row").get(0).asText().equalsIgnoreCase("on")){
+	        		privacy = true;
+	        	}
+	        }
+		}
+        
+        return ok(myKinCard.render(userList, privacy));
 	}
 }
