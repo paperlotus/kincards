@@ -32,6 +32,7 @@ public class Dashboard extends Controller{
     	String email = session().get("email");
     	String query = "MATCH (a)-[r:CONNECTED]-(b) where a.email=\'"+email+"\' RETURN b order by b.fName";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+        int count = 0;
         
         List<User> userList = new ArrayList<User>();
         
@@ -64,7 +65,18 @@ public class Dashboard extends Controller{
             	user.website = node.get("row").findPath("website").asText();
             	user.zip = node.get("row").findPath("zip").asLong();
             	userList.add(user);
-            }				
+            }
+            query = "MATCH (a)-[r:KNOWS]-(b) where a.email=\'"+email+"\' RETURN count(*)";
+            resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+            json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+    		results = (ArrayNode)json;
+    		if(results.size()>0){
+    			Iterator<JsonNode> ite = results.iterator();
+    	        while (ite.hasNext()) {
+    	        	JsonNode node  = ite.next();
+    	        	count = node.get("row").get(0).asInt();
+    	        }
+    		}
 			
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
@@ -74,7 +86,7 @@ public class Dashboard extends Controller{
 			e.printStackTrace();
 		}
         
-        return ok(dashboard.render(userList));
+        return ok(dashboard.render(userList, count));
     }
 	
 	public static Result exportVCF(String userName){

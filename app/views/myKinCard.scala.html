@@ -67,13 +67,7 @@
                               <p>Dashboard</p>
                           </a>
                       </li>
-<!--                       <li> -->
-<!--                           <a href="@routes.Requests.addContact()" data-toggle="tooltip" data-placement="bottom" class="btn-tooltip" title="Find/add your contact's KinCards"> -->
-<!--                               <i class="pe-7s-add-user"> -->
-<!--                               </i> -->
-<!--                               <p id="addCont">Add Contact</p> -->
-<!--                           </a> -->
-<!--                       </li> -->
+
 	                    <li>
 	                        <a href="@routes.Requests.myRequests()" data-toggle="tooltip" data-placement="bottom" class="btn-tooltip" title="Accept/Reject your connection requests">
 	                            <i class="pe-7s-mail">
@@ -134,13 +128,13 @@
                                                 <h3 class="name">@user.fName @user.lName</h3>
                                                 <p class="profession">@user.designation</p>
                                                 @if(user.phone != ""){
-                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone</h5>
+                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i><a href="tel: @user.phone">@user.phone</a></h5>
                                                 }@if(user.phone2 != ""){
-                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone2</h5>
+                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i><a href="tel: @user.phone2">@user.phone2</a></h5>
                                                 }@if(user.email != ""){
-                                                	<h5><i class="fa fa-envelope-o fa-fw text-muted"></i> @user.email</h5>
+                                                	<h5><i class="fa fa-envelope-o fa-fw text-muted"></i> <a href="mailto: @user.email">@user.email</a></h5>
                                                 }@if(user.website != ""){
-                                                	<h5><i class="fa fa-globe fa-fw text-muted"></i>@user.website</h5>
+                                                	<h5><i class="fa fa-globe fa-fw text-muted"></i><a href="@user.website">@user.website</a></h5>
                                                 }
                                             </div>
                                             <div class="footer">
@@ -189,6 +183,7 @@
                         	<div class="area-line">
                         		<h4>Share your KinCard with others using following link:</h4>
 			                    <pre>http://kincards.com/mycard/@session.get("userName")</pre>
+			                    <button class="btn btn-warning" onclick="javascript: emailContact();">Send as Email</button>
 		                    </div><br><br>
                         	<div class="area-line">
                         		<h4>Want to add KinCard to your website/blog?</h4>
@@ -257,9 +252,9 @@
             });
         }
         
-        function emailContact(ph){
+        function emailContact(){
         	var email = prompt("Please enter the email address to share KinCard with:", "");
-        	var action = "/email/"+ph+"/"+email;
+        	var action = "/email/"+email;
         	$.post( action, function(data) {
         		console.log(data);
             });

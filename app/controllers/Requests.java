@@ -331,13 +331,12 @@ public static Result rejectRequest(String email){
 		return ok();
 	}
 	
-	public static Result emailContact(String userName, String email){
-		File file = VCFHelper.createVCF(userName);
-		String fileName = file.getAbsolutePath();
-		String userEmail = session().get("email");
-		String subject = userEmail+" has shared a KinCard with you.";
-		String body = "";
-		EmailHelper.sendEmailWithAttachment(email, subject, body, fileName);
+	public static Result emailContact(String email){
+		String userName = session().get("userName");
+		String subject = userName+" has shared their KinCard with you.";
+		String body = "You can see their beautiful KinCard at: <a href=\"http://kincards.com/mycard/"+userName+"\">http://kincards.com/mycard/"+userName+"</a>";
+		System.out.println(body);
+		EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 		return ok("Email Sent");
 	}
 	

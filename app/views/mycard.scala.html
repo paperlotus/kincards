@@ -69,13 +69,13 @@
                                                 <h3 class="name">@user.fName @user.lName</h3>
                                                 <p class="profession">@user.designation</p>
                                                 @if(user.phone != ""){
-                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone</h5>
+                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i><a href="tel: @user.phone">@user.phone</a></h5>
                                                 }@if(user.phone2 != ""){
-                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i>@user.phone2</h5>
+                                                	<h5><i class="fa fa-mobile fa-fw text-muted"></i><a href="tel: @user.phone2">@user.phone2</a></h5>
                                                 }@if(user.email != ""){
-                                                	<h5><i class="fa fa-envelope-o fa-fw text-muted"></i> @user.email</h5>
+                                                	<h5><i class="fa fa-envelope-o fa-fw text-muted"></i> <a href="mailto: @user.email">@user.email</a></h5>
                                                 }@if(user.website != ""){
-                                                	<h5><i class="fa fa-globe fa-fw text-muted"></i>@user.website</h5>
+                                                	<h5><i class="fa fa-globe fa-fw text-muted"></i><a href="@user.website">@user.website</a></h5>
                                                 }
                                             </div>
                                             <div class="footer">

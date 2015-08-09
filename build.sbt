@@ -22,7 +22,9 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.18",
   "org.freemarker" % "freemarker" % "2.3.20",
   "javax.activation" % "activation" % "1.0.2",
-  "org.brickred" % "socialauth" % "4.2"
+  "org.brickred" % "socialauth" % "4.2",
+  "com.google.gdata" % "core" % "1.47.1",
+  "com.google.api.client" % "google-api-client" % "1.4.0-alpha"
 )
 
 resolvers ++= Seq("neo4j" at "http://m2.neo4j.org/content/groups/everything",
