@@ -60,14 +60,8 @@ public class Profile extends Controller{
         String addressLn2 = requestData.get("add2");
         String city = requestData.get("city");
         String state = requestData.get("state");
-        long zip = 0;
-        if(requestData.get("zip") != null && !requestData.get("zip").equals("")){
-        	zip = Long.parseLong(requestData.get("zip"));
-        }
-        long fax = 0;
-        if(requestData.get("fax") != null && !requestData.get("fax").equals("")){
-        	fax = Long.parseLong(requestData.get("fax"));
-        }
+        String zip = requestData.get("zip");
+        String fax = requestData.get("fax");
         String companyName = requestData.get("cName");
         String designation = requestData.get("desig");
         String website = requestData.get("website");
@@ -261,7 +255,7 @@ public class Profile extends Controller{
             	user.designation = node.get("row").findPath("designation").asText();
             	user.email = node.get("row").findPath("email").asText();
             	user.facebook = node.get("row").findPath("facebook").asText();
-            	user.fax = node.get("row").findPath("fax").asLong();
+            	user.fax = node.get("row").findPath("fax").asText();
             	user.fName = node.get("row").findPath("fName").asText();
             	user.linkedIn = node.get("row").findPath("linkedIn").asText();
             	user.lName = node.get("row").findPath("lName").asText();
@@ -269,7 +263,7 @@ public class Profile extends Controller{
             	user.state = node.get("row").findPath("state").asText();
             	user.twitter = node.get("row").findPath("twitter").asText();
             	user.website = node.get("row").findPath("website").asText();
-            	user.zip = node.get("row").findPath("zip").asLong();
+            	user.zip = node.get("row").findPath("zip").asText();
             	user.privacy = node.get("row").findPath("privacy").asText();
             	userList.add(user);
             }				

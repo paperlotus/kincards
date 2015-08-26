@@ -132,52 +132,74 @@ public class Requests extends Controller {
         return ok(contact.render());
     }
     
-    public static Result uploadContact() throws URISyntaxException{
+    public static Result uploadContact() throws URISyntaxException, NoSuchAlgorithmException, InvalidKeySpecException{
     	uploadVCF();
         return ok(contact.render());
     }
     
-    private static boolean uploadVCF() {
+    private static boolean uploadVCF() throws NoSuchAlgorithmException, InvalidKeySpecException {
     	MultipartFormData body1 = request().body().asMultipartFormData();
 	    MultipartFormData.FilePart contact = body1.getFile("contact");
 	    if (contact != null) {
 	        File file = contact.getFile();
 	        String email = "";
 	        String subject = "Meet KinCards";
-            String body = "Your connection Ishita has invited you to join <a href=\"http://kincards.com\">KinCards</a>. <br/>"
+            String body = "Your connection "+session().get("email")+" has invited you to join <a href=\"http://kincards.com\">KinCards</a>. <br/>"
             		+ "<h2>What is KinCards?</h2>"
             		+ "<a href=\"http://kincards.com\">KinCards</a> is a community who have discovered how easy and efficient is to share contacts. <a href=\"http://kincards.com\">KinCards</a> lets you create and personalize your own virtual business card, and share your contact information immediately with your user name, unique url, or email. You can create a beautiful virtual business card like Emile: <a href=\"http://kincards.com/mycard/emile\">http://kincards.com/mycard/emile</a>.<br/> "
             		+ "<br/> Learn more about KinCards by watching this short movie: <a href=\"http://kincards.com/assets/video/kincards.mp4\">KinCards Movie</a>."
-            		+ "<br/><br/>KinCards is <b>100% free</b> to use/share. Join KinCards community today at <a href=\"http://bit.ly/1hX8HbR\">http://kincards.com/login</a>";
+            		+ "<br/><br/>KinCards is <b>100% free</b> to use/share. Infact, we have already created an account for you, to make it easy to join. Login to KinCards at <a href=\"http://bit.ly/1hX8HbR\">http://kincards.com/login</a> using your email. Your temporary password is 'welcome2kincards' which can update/recover anytime. <br/>Welcome aboard!";
 	        try {
 				List<VCard> vcard = Ezvcard.parse(file).all();
+				User bob;
 				for(int i=0; i<vcard.size();i++){
 					Iterator<Email> it = vcard.get(i).getEmails().iterator();
 					while(it.hasNext()){
-						email = it.next().getValue();		
+						email = it.next().getValue();
 						if(email != null && email != ""){
+							bob = User.findByEmail(email);
+							if(bob != null && bob.email != null){
 							
-				            
-				            EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
+							}else{
+								bob = User.createUser(email, email, PasswordHash.createHash("welcome2kincards"));
+								if(vcard.get(i).getFormattedName() != null){
+									bob.fName = vcard.get(i).getFormattedName().toString();
+								}
+								if(vcard.get(i).getOrganization() != null){
+									bob.companyName = vcard.get(i).getOrganization().toString();
+								}
+								if(vcard.get(i).getTelephoneNumbers() != null && vcard.get(i).getTelephoneNumbers().size()>0){
+									bob.phone = vcard.get(i).getTelephoneNumbers().get(0).toString();
+								}
+								if(vcard.get(i).getTelephoneNumbers() != null && vcard.get(i).getTelephoneNumbers().size()>1){
+									bob.phone2 = vcard.get(i).getTelephoneNumbers().get(1).toString();
+								}
+								String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+session().get("email")+"\' and b.email = \'"+email+"\' CREATE (a)-[r:CONNECTED]->(b) return r;";
+					    		CreateSimpleGraph.sendTransactionalCypherQuery(query);
+								
+					            EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
+							}
+						}else{
+							bob = User.createUser("", vcard.get(i).getFormattedName().toString(), PasswordHash.createHash("welcome2kincards"));
+							if(vcard.get(i).getFormattedName() != null){
+								bob.fName = vcard.get(i).getFormattedName().toString();
+							}
+							if(vcard.get(i).getOrganization() != null){
+								bob.companyName = vcard.get(i).getOrganization().toString();
+							}
+							if(vcard.get(i).getTelephoneNumbers() != null && vcard.get(i).getTelephoneNumbers().size()>0){
+								bob.phone = vcard.get(i).getTelephoneNumbers().get(0).toString();
+							}
+							if(vcard.get(i).getTelephoneNumbers() != null && vcard.get(i).getTelephoneNumbers().size()>1){
+								bob.phone2 = vcard.get(i).getTelephoneNumbers().get(1).toString();
+							}
+							if(bob.phone != null && !bob.phone.equals("")){
+								String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+session().get("email")+"\' and b.phone = \'"+bob.phone+"\' CREATE (a)-[r:CONNECTED]->(b) return r;";
+								CreateSimpleGraph.sendTransactionalCypherQuery(query);
+							}
 						}
 					}
 				}
-//				Iterator<Email> it = vcard.getEmails().iterator();
-//				while(it.hasNext()){
-//					email = it.next().getValue();		
-//					if(email != null && email != ""){
-//						System.out.println("email="+email);
-//			    		String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+session().get("email")+"\' and b.email = \'"+email+"\' CREATE (a)-[r:CONNECTED]->(b) return r;";
-//			    		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
-//			    		JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
-//						ArrayNode results = (ArrayNode)json;
-//						if(results.size()>0){
-//							flash("request-error", "Contact added to your dashboard.");
-//						}else{
-//							flash("request-error", "Problem adding contact.");
-//						}
-//					}
-//				}
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -260,7 +282,7 @@ public class Requests extends Controller {
             	user.designation = node.get("row").findPath("designation").asText();
             	user.email = node.get("row").findPath("email").asText();
             	user.facebook = node.get("row").findPath("facebook").asText();
-            	user.fax = node.get("row").findPath("fax").asLong();
+            	user.fax = node.get("row").findPath("fax").asText();
             	user.fName = node.get("row").findPath("fName").asText();
             	user.linkedIn = node.get("row").findPath("linkedIn").asText();
             	user.lName = node.get("row").findPath("lName").asText();
@@ -268,7 +290,7 @@ public class Requests extends Controller {
             	user.state = node.get("row").findPath("state").asText();
             	user.twitter = node.get("row").findPath("twitter").asText();
             	user.website = node.get("row").findPath("website").asText();
-            	user.zip = node.get("row").findPath("zip").asLong();
+            	user.zip = node.get("row").findPath("zip").asText();
             	userList.add(user);
             	
             }				
