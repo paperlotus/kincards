@@ -36,10 +36,9 @@ POST	/contact					controllers.Application.sendContact()
 GET     /getImage                   controllers.Application.getImage(id: Long)
 POST	/delete						controllers.Profile.deleteProfile()
 POST	/export:ph					controllers.Dashboard.exportVCF(ph:String)
-POST	/email/:email				controllers.Requests.emailContact(email:String)
+POST	/email						controllers.Requests.emailContact()
 POST	/share/:ph/:email			controllers.Requests.shareContact(ph:String, email:String)
 GET		/business					controllers.Application.business()
-GET 	/social						controllers.Application.socialConnections()
 GET		/mycard/:user				controllers.Application.getMyCard(user: String)
 GET		/myKinCard/:user			controllers.Profile.getMyCard(user: String)
 GET		/mkt						controllers.Application.mktEmails()
@@ -51,8 +50,8 @@ GET		/goog						controllers.GoogleContactsAccess.goog()
 GET     /twitter/homeTimeline controllers.Twitter.homeTimeline()
 GET     /twitter/auth         controllers.Twitter.auth()
 
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET     /emailTemplate.html		    controllers.Assets.at(path="/public", file = "emailTemplate.html")
 GET     /sitemap.xml    			controllers.Assets.at(path="/public", file = "sitemap.xml")
+

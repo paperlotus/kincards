@@ -51,7 +51,7 @@
 <div class="wrapper">
     <div class="parallax filter-black">
         <div class="parallax-image">
-            <img src="/assets/images/examples/about_5.jpg" alt="KinCards about5">
+            <img src="/assets/images/examples/kincards.png" alt="KinCards about5">
         </div>    
         <div class="small-info">
             <img alt="KinCards logo" src="@routes.Assets.at("images/Klogo.png")"></a><br/>
@@ -74,6 +74,35 @@ KinCards will allow you to share your contact details, as well as gain access to
 </p>                    
                    </div>
                    <div class="col-md-6">
+                   		<div class="card card-background">
+                            <div class="video">
+                                <video id="video-source" preload="auto" loop="loop" muted="muted" volume="0"> 
+                                    <source src="assets/video/kincards.webm" type="video/webm"> 
+                                    <source src="assets/video/kincards.ogv" type="video/ogg">
+                                    <source src="assets/video/kincards.mp4" type="video/mp4"> 
+                                    Video not supported                                 
+                                </video>
+                                <div class="filter"></div>
+                            </div>
+                            <div class="content">
+                                <h4 class="title">KinCards Story</h4>
+                            </div>
+                            <div class="footer">
+                                 <button type="button" data-video="video-source" data-toggle="video" class="btn btn-neutral btn-round">
+                                    <i class="fa fa-play"></i> Play 
+                                </button>
+                            </div>
+                        </div> <!-- end card -->
+                   </div>
+                   
+                </div>
+            
+                <div class="space-50"></div>
+                <hr>
+                <div class="space-50"></div>
+                <h1 class="section-title">What it does?</h1>
+                <div class="row">
+                   <div class="col-md-6">
                         <div id="description-carousel" class="carousel fade" data-ride="carousel">                            
                               <!-- Wrapper for slides -->
                               <div class="carousel-inner">
@@ -91,22 +120,10 @@ KinCards will allow you to share your contact details, as well as gain access to
                               </ol>
                         </div>
                    </div>
-                </div>
-            
-                <div class="space-50"></div>
-                <hr>
-                <div class="space-50"></div>
-                <h1 class="section-title">What it does?</h1>
-                <div class="row">
-                   <div class="col-md-6">
-                      <div class="img-container">
-                          <img src="/assets/images/examples/SS3.png" alt="KinCards screenshot 3">
-                      </div>
-                   </div>
                    <div class="col-md-6">
                        <p>
-                           KinCards lets you create and personalize your own virtual business card, and share your contact information immediately with your phone number or email. Connections can easily exchange, collect and store KinCards. The stored cards are saved to your KinCard app and easily accessed at any time. The app then acts as your own personal rolodex, complete with photo, phone numbers, social media sites, website, address and business information.</p>
-                        <p>Your contact information is never shared publicly, and you’ll never loose anyone's contact information again.</p>
+                           KinCards lets you create and personalize your own virtual business card, and share your contact information immediately with your user name, unique url, or email. Connections can easily exchange, collect and store KinCards. The stored cards are saved to your KinCard app and easily accessed at any time. The app then acts as your own personal rolodex, complete with photo, phone numbers, social media sites, website, address and business information.</p>
+                        <p>Your contact information is never shared publicly without your consent, and you’ll never loose anyone's contact information again.</p>
                     
                    </div>
                </div>
@@ -381,8 +398,10 @@ The best part is: if you lose your phone or change your device, you won’t lose
 	<script src="@routes.Assets.at("javascripts/get-shit-done.js")"></script>
     
     <script type="text/javascript">
+    
         var big_image;
         $().ready(function(){
+        	
             responsive = $(window).width();
             
             $(window).on('scroll', gsdk.checkScrollForTransparentNavbar);
@@ -407,4 +426,14 @@ The best part is: if you lose your phone or change your device, you won’t lose
         };
 
     </script>
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	
+	  ga('create', 'UA-63690567-1', 'auto');
+	  ga('send', 'pageview');
+	
+	</script>
 </html>

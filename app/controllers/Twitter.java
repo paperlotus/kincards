@@ -42,8 +42,10 @@ public class Twitter extends Controller {
   
   public static Result auth() {
     String verifier = request().getQueryString("oauth_verifier");
+    System.out.println("twitter verifier:"+verifier);
     if (Strings.isNullOrEmpty(verifier)) {
       String url = routes.Twitter.auth().absoluteURL(request());
+      System.out.println("url=="+url);
       RequestToken requestToken = TWITTER.retrieveRequestToken(url);
       saveSessionTokenPair(requestToken);
       return redirect(TWITTER.redirectUrl(requestToken.token));

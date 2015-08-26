@@ -138,28 +138,46 @@ public class Requests extends Controller {
     }
     
     private static boolean uploadVCF() {
-    	MultipartFormData body = request().body().asMultipartFormData();
-	    MultipartFormData.FilePart contact = body.getFile("contact");
-	    String email = "";
+    	MultipartFormData body1 = request().body().asMultipartFormData();
+	    MultipartFormData.FilePart contact = body1.getFile("contact");
 	    if (contact != null) {
 	        File file = contact.getFile();
+	        String email = "";
+	        String subject = "Meet KinCards";
+            String body = "Your connection Ishita has invited you to join <a href=\"http://kincards.com\">KinCards</a>. <br/>"
+            		+ "<h2>What is KinCards?</h2>"
+            		+ "<a href=\"http://kincards.com\">KinCards</a> is a community who have discovered how easy and efficient is to share contacts. <a href=\"http://kincards.com\">KinCards</a> lets you create and personalize your own virtual business card, and share your contact information immediately with your user name, unique url, or email. You can create a beautiful virtual business card like Emile: <a href=\"http://kincards.com/mycard/emile\">http://kincards.com/mycard/emile</a>.<br/> "
+            		+ "<br/> Learn more about KinCards by watching this short movie: <a href=\"http://kincards.com/assets/video/kincards.mp4\">KinCards Movie</a>."
+            		+ "<br/><br/>KinCards is <b>100% free</b> to use/share. Join KinCards community today at <a href=\"http://bit.ly/1hX8HbR\">http://kincards.com/login</a>";
 	        try {
-				VCard vcard = Ezvcard.parse(file).first();
-				Iterator<Email> it = vcard.getEmails().iterator();
-				while(it.hasNext()){
-					email = it.next().getValue();		
-					if(email != null && email != ""){
-			    		String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+session().get("email")+"\' and b.email = \'"+email+"\' CREATE (a)-[r:CONNECTED]->(b) return r;";
-			    		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
-			    		JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
-						ArrayNode results = (ArrayNode)json;
-						if(results.size()>0){
-							flash("request-error", "Contact added to your dashboard.");
-						}else{
-							flash("request-error", "Problem adding contact.");
+				List<VCard> vcard = Ezvcard.parse(file).all();
+				for(int i=0; i<vcard.size();i++){
+					Iterator<Email> it = vcard.get(i).getEmails().iterator();
+					while(it.hasNext()){
+						email = it.next().getValue();		
+						if(email != null && email != ""){
+							
+				            
+				            EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 						}
 					}
 				}
+//				Iterator<Email> it = vcard.getEmails().iterator();
+//				while(it.hasNext()){
+//					email = it.next().getValue();		
+//					if(email != null && email != ""){
+//						System.out.println("email="+email);
+//			    		String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+session().get("email")+"\' and b.email = \'"+email+"\' CREATE (a)-[r:CONNECTED]->(b) return r;";
+//			    		String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
+//			    		JsonNode json = new ObjectMapper().readTree(resp).findPath("results").findPath("data");
+//						ArrayNode results = (ArrayNode)json;
+//						if(results.size()>0){
+//							flash("request-error", "Contact added to your dashboard.");
+//						}else{
+//							flash("request-error", "Problem adding contact.");
+//						}
+//					}
+//				}
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -331,13 +349,14 @@ public static Result rejectRequest(String email){
 		return ok();
 	}
 	
-	public static Result emailContact(String email){
+	public static Result emailContact(){
+		DynamicForm requestData = Form.form().bindFromRequest();
+		String email = requestData.get("email");
 		String userName = session().get("userName");
 		String subject = userName+" has shared their KinCard with you.";
 		String body = "You can see their beautiful KinCard at: <a href=\"http://kincards.com/mycard/"+userName+"\">http://kincards.com/mycard/"+userName+"</a>";
-		System.out.println(body);
 		EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
-		return ok("Email Sent");
+		return redirect(routes.Profile.getMyCard(userName));
 	}
 	
 	public static Result shareContact(String userName, String email){
@@ -409,7 +428,6 @@ public static Result rejectRequest(String email){
 	}
 	
 	public static Result addKinCard(String userName){
-		System.out.println("userName="+userName);
 		String userUserName = session().get("userName");
     	
     	String query = "";

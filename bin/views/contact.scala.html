@@ -144,24 +144,14 @@
                                 </ul>
                                 <div class="tab-content">
                                     <div class="tab-pane" id="about">
-	                                    <form action="@routes.Requests.requestContact()" method="post" name="profileForm">
+	                                    <form action="@routes.Application.search()" method="post" name="profileForm">
 	                                        <div class="row">
 	                                            <h4 class="info-text">Find and Add Contacts</h4>
 	                                            <div class="col-sm-3"></div>
 	                                            <div class="col-sm-6">
 	                                                <div class="form-group">
-	                                                    <label for="exampleInputEmail1">Find by User Name</label>
-	                                                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="testusername..." name="userName">
-	                                                </div>
-	                                                <h3 style="margin-left:40%;">Or</h3>
-	                                                <div class="form-group">
-	                                                    <label for="exampleInputEmail1">Find by Email</label>
-	                                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="andrew@@kincards.com..." name="email">
-	                                                </div>
-	                                                <h3 style="margin-left:40%;">Or</h3>
-	                                                <div class="form-group">
-	                                                    <label for="exampleInputEmail1">Find by Phone Number</label>
-	                                                    <input type="phone" class="form-control" id="exampleInputEmail1" placeholder="1234567890..." name="phone">
+	                                                    <label for="exampleInputEmail1">Find by Name/User Name/Phone/Email</label>
+	                                                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="testusername..." name="search">
 	                                                </div>
 	                                                <div class="form-group">
 	                                                    <input type='submit' class='btn btn-fill btn-warning btn-wd btn-sm' name='finish' value='Send Request' onclick="javascript: submitForm();"/>

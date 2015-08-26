@@ -10,9 +10,12 @@ import models.*;
 import helper.CountryHelper;
 import helper.CreateSimpleGraph;
 import helper.EmailHelper;
+import helper.PasswordHash;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -166,12 +169,13 @@ public class Profile extends Controller{
 		return ok(settings.render(privacy));
 	}
 	
-	public static Result updateSettings(){
+	public static Result updateSettings() throws NoSuchAlgorithmException, InvalidKeySpecException{
 		DynamicForm requestData = Form.form().bindFromRequest();
 		
 		String email = session().get("email");
 		String pin = requestData.get("pin");
-		String query = "MATCH (n {email : \'"+email+"\'}) SET n.pin = \'"+pin+"\';";
+		String password = PasswordHash.createHash(pin);
+		String query = "MATCH (n {email : \'"+email+"\'}) SET n.pin = \'"+password+"\';";
 		CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		flash("pin", "Successfully updated your password");
 		

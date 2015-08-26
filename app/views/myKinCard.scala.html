@@ -67,7 +67,13 @@
                               <p>Dashboard</p>
                           </a>
                       </li>
-
+                      <li>
+                          <a href="@routes.Requests.addContact()" data-toggle="tooltip" data-placement="bottom" class="btn-tooltip" title="Find/add your contact's KinCards">
+                              <i class="pe-7s-add-user">
+                              </i>
+                              <p id="addCont">Add Contact</p>
+                          </a>
+                      </li>                      
 	                    <li>
 	                        <a href="@routes.Requests.myRequests()" data-toggle="tooltip" data-placement="bottom" class="btn-tooltip" title="Accept/Reject your connection requests">
 	                            <i class="pe-7s-mail">
@@ -183,7 +189,10 @@
                         	<div class="area-line">
                         		<h4>Share your KinCard with others using following link:</h4>
 			                    <pre>http://kincards.com/mycard/@session.get("userName")</pre>
-			                    <button class="btn btn-warning" onclick="javascript: emailContact();">Send as Email</button>
+			                    <form method="post" action="@routes.Requests.emailContact()">
+			                    	<input type="text" id="email" name="email" class="form-control" placeholder="Email"/>
+			                    	<button class="btn btn-warning" type="submit">Share by Email</button>
+			                    </form>
 		                    </div><br><br>
                         	<div class="area-line">
                         		<h4>Want to add KinCard to your website/blog?</h4>
@@ -249,14 +258,6 @@
         		window.open(data);
         		document.location = 'data:Application/octet-stream,' +
                 encodeURIComponent(data);
-            });
-        }
-        
-        function emailContact(){
-        	var email = prompt("Please enter the email address to share KinCard with:", "");
-        	var action = "/email/"+email;
-        	$.post( action, function(data) {
-        		console.log(data);
             });
         }
         

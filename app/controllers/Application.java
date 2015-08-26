@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.brickred.socialauth.SocialAuthConfig;
-import org.brickred.socialauth.SocialAuthManager;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,7 +111,7 @@ public class Application extends Controller {
         session().clear();
         flash("logout", "You've been successfully logged out.");
         return redirect(
-                routes.Application.index()
+                routes.Application.login()
         );
     }
 
@@ -136,7 +133,7 @@ public class Application extends Controller {
 		            session("userName", userName);
 		            bob = User.createUser(email, userName, pin);
 		            String subject = "Welcome to KinCards";
-		            String body = "Friend, Welcome to KinCards. You've just joined a community who have discoved how easy and efficient is to share contacts.<br/>You can use your KinCard url: http://kincards.com/mycard/"+userName+" to easily share your contacts with others.<br/><br/> Thank you for joining us.";
+		            String body = "Friend, Welcome to KinCards. You've just joined a community who have discovered how easy and efficient is to share contacts.<br/>You can use your KinCard url: http://kincards.com/mycard/"+userName+" to easily share your contacts with others.<br/><br/> Thank you for joining us.";
 		            EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 		        }
 	        }
@@ -206,10 +203,12 @@ public class Application extends Controller {
 		String subject = "Your KinCards Password";
 		String newPassword = generateRandomString();
 		String hash = PasswordHash.createHash(newPassword);
-		String body = "You asked for your KinCards password. Here is a temporary password that would allow you to login to KinCards: "+newPassword+" <br/> By the way, you do remember your username... don't you "+user.userName;
+		System.out.println(newPassword);
+		String body = "You asked for your KinCards password. Here is a temporary password that would allow you to login to KinCards: "+newPassword+" <br/> By the way, you do remember your username... don't you '"+user.userName+"'";
 		if(user != null && user.email != null && user.email != ""){
 			EmailHelper.sendEmail(user.email, subject, body, "forgotPassword.ftl");
-			String query = "MATCH (n {userName : \'"+userName+"\' and email : \'"+user.email+"\'}) set n.pin = \'"+hash+"\' RETURN n.email;";
+			String query = "MATCH (n:Account) where n.userName = \'"+userName+"\' and n.email = \'"+user.email+"\' set n.pin = \'"+hash+"\' RETURN n.email;";
+			System.out.println("qu="+query);
 			String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
 		}else{
 				flash("pin", "We are not able to find your account with this email address. Why don't you try creating an account using this email.");
@@ -252,21 +251,7 @@ public class Application extends Controller {
 	public static Result business(){
 		return ok(business.render());
 	}
-	
-	public static Result socialConnections() throws Exception{
-		SocialAuthConfig config = SocialAuthConfig.getDefault();
-		config.load();
 		
-		SocialAuthManager manager = new SocialAuthManager();
-		manager.setSocialAuthConfig(config);
-		
-		String successUrl = "http://opensource.brickred.com/socialauthdemo/socialAuthSuccessAction.do";
-		
-		String url = manager.getAuthenticationUrl("yahoo", successUrl);
-		redirect(url);
-		return ok();
-	}
-	
 	public static Result getMyCard(String userName){
 		userName = formatUserName(userName);
 		
@@ -386,7 +371,6 @@ public class Application extends Controller {
 	public static Result search(){
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String search = requestData.get("search");
-		System.out.println("search..."+search);
 		String query = "MATCH (a:Account) where a.userName=\'"+search+"\' or a.email=\'"+search+"\' or a.fName=\'"+search+"\' or a.lName=\'"+search+"\' or a.phone=\'"+search+"\' or a.companyName=\'"+search+"\'  RETURN a";
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         
