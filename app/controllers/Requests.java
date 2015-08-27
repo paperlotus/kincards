@@ -32,6 +32,7 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.property.Email;
+import ezvcard.property.Telephone;
 
 /**
  * Created by secret on 5/19/15.
@@ -152,27 +153,26 @@ public class Requests extends Controller {
 	        try {
 				List<VCard> vcard = Ezvcard.parse(file).all();
 				User bob;
+				
 				for(int i=0; i<vcard.size();i++){
+
 					Iterator<Email> it = vcard.get(i).getEmails().iterator();
 					while(it.hasNext()){
 						email = it.next().getValue();
 						if(email != null && email != ""){
 							bob = User.findByEmail(email);
 							if(bob != null && bob.email != null){
-							
+								System.out.println("bob is not null");
 							}else{
 								bob = User.createUser(email, email, PasswordHash.createHash("welcome2kincards"));
 								if(vcard.get(i).getFormattedName() != null){
-									bob.fName = vcard.get(i).getFormattedName().toString();
-								}
-								if(vcard.get(i).getOrganization() != null){
-									bob.companyName = vcard.get(i).getOrganization().toString();
+									bob.fName = vcard.get(i).getFormattedName().getValue().toString();
 								}
 								if(vcard.get(i).getTelephoneNumbers() != null && vcard.get(i).getTelephoneNumbers().size()>0){
-									bob.phone = vcard.get(i).getTelephoneNumbers().get(0).toString();
+									bob.phone = vcard.get(i).getTelephoneNumbers().get(0).getText();
 								}
 								if(vcard.get(i).getTelephoneNumbers() != null && vcard.get(i).getTelephoneNumbers().size()>1){
-									bob.phone2 = vcard.get(i).getTelephoneNumbers().get(1).toString();
+									bob.phone2 = vcard.get(i).getTelephoneNumbers().get(1).getText();
 								}
 								String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+session().get("email")+"\' and b.email = \'"+email+"\' CREATE (a)-[r:CONNECTED]->(b) return r;";
 					    		CreateSimpleGraph.sendTransactionalCypherQuery(query);
@@ -180,18 +180,15 @@ public class Requests extends Controller {
 					            EmailHelper.sendEmail(email, subject, body, "forgotPassword.ftl");
 							}
 						}else{
-							bob = User.createUser("", vcard.get(i).getFormattedName().toString(), PasswordHash.createHash("welcome2kincards"));
+							bob = User.createUser("", vcard.get(i).getTelephoneNumbers().get(0).getText(), PasswordHash.createHash("welcome2kincards"));
 							if(vcard.get(i).getFormattedName() != null){
-								bob.fName = vcard.get(i).getFormattedName().toString();
-							}
-							if(vcard.get(i).getOrganization() != null){
-								bob.companyName = vcard.get(i).getOrganization().toString();
+								bob.fName = vcard.get(i).getFormattedName().getValue().toString();
 							}
 							if(vcard.get(i).getTelephoneNumbers() != null && vcard.get(i).getTelephoneNumbers().size()>0){
-								bob.phone = vcard.get(i).getTelephoneNumbers().get(0).toString();
+								bob.phone = vcard.get(i).getTelephoneNumbers().get(0).getText();
 							}
 							if(vcard.get(i).getTelephoneNumbers() != null && vcard.get(i).getTelephoneNumbers().size()>1){
-								bob.phone2 = vcard.get(i).getTelephoneNumbers().get(1).toString();
+								bob.phone2 = vcard.get(i).getTelephoneNumbers().get(1).getText();
 							}
 							if(bob.phone != null && !bob.phone.equals("")){
 								String query = "MATCH (a:Account), (b:Account) WHERE a.email = \'"+session().get("email")+"\' and b.phone = \'"+bob.phone+"\' CREATE (a)-[r:CONNECTED]->(b) return r;";
