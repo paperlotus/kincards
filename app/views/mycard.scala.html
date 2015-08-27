@@ -56,7 +56,11 @@
                                 <div class="card card-user" id="cards">
                                     <div class="front">
                                         <div class="cover">
-                                            <img src="@routes.Assets.at("images/rotating_card_thumb2.png")"/>
+                                            @if(user.style != null && user.style != ""){
+												<img src="@routes.Assets.at(user.style)"/>
+											}else{
+												<img src="@routes.Assets.at("images/card/sky.jpg")"/>
+											}
                                         </div>
                                         <div class="user">
                                             @if(user.photoId > 0){

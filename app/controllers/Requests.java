@@ -288,6 +288,7 @@ public class Requests extends Controller {
             	user.twitter = node.get("row").findPath("twitter").asText();
             	user.website = node.get("row").findPath("website").asText();
             	user.zip = node.get("row").findPath("zip").asText();
+            	user.userName = node.get("row").findPath("userName").asText();
             	userList.add(user);
             	
             }				

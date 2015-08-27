@@ -41,6 +41,7 @@ public class User extends Model {
     public boolean active;
     public String country;
     public String privacy;
+    public String style;
     
     public static User findUser(String email, String pin){
     	String query = "MATCH (ee:Account) WHERE ee.email = \'"+email+"\' and ee.pin = \'"+pin+"\' RETURN ee;";
@@ -79,6 +80,7 @@ public class User extends Model {
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
                 user.privacy = node.get("row").findPath("privacy").asText();
+                user.style = node.get("row").findPath("style").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -128,6 +130,7 @@ public class User extends Model {
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
                 user.privacy = node.get("row").findPath("privacy").asText();
+                user.style = node.get("row").findPath("style").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -178,6 +181,7 @@ public class User extends Model {
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
                 user.privacy = node.get("row").findPath("privacy").asText();
+                user.style = node.get("row").findPath("style").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -228,6 +232,7 @@ public class User extends Model {
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
                 user.privacy = node.get("row").findPath("privacy").asText();
+                user.style = node.get("row").findPath("style").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -278,6 +283,7 @@ public static User findByUserName(String userName){
                 user.active = node.get("row").findPath("active").asBoolean();
                 user.country = node.get("row").findPath("country").asText();
                 user.privacy = node.get("row").findPath("privacy").asText();
+                user.style = node.get("row").findPath("style").asText();
             }				
 			
 		} catch (JsonProcessingException e) {
@@ -328,6 +334,7 @@ public static User findByEmailorUserName(String userName){
             user.active = node.get("row").findPath("active").asBoolean();
             user.country = node.get("row").findPath("country").asText();
             user.privacy = node.get("row").findPath("privacy").asText();
+            user.style = node.get("row").findPath("style").asText();
         }				
 		
 	} catch (JsonProcessingException e) {

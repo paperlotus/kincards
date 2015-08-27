@@ -64,6 +64,7 @@ public class Dashboard extends Controller{
             	user.twitter = node.get("row").findPath("twitter").asText();
             	user.website = node.get("row").findPath("website").asText();
             	user.zip = node.get("row").findPath("zip").asText();
+            	user.style = node.get("row").findPath("style").asText();
             	userList.add(user);
             }
             query = "MATCH (a)-[r:KNOWS]-(b) where a.email=\'"+email+"\' RETURN count(*)";

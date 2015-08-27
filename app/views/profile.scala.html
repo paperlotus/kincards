@@ -131,6 +131,7 @@
                                         <li><a href="#account" class="btn" data-toggle="tab"  onclick="javascript: account();">Company Info</a></li>
                                         <li><a href="#social" class="btn" data-toggle="tab" onclick="javascript: social();">Social</a></li>
                                         <li><a href="#address" class="btn" data-toggle="tab" onclick="javascript: address();">Address</a></li>
+                                        <li><a href="#style" class="btn" data-toggle="tab" onclick="javascript: skin();">Style</a></li>
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane" id="about">
@@ -299,6 +300,55 @@
                                                 </div>
                                             </div>
                                         </div>
+										<div class="tab-pane" id="style">
+		                                <h4 class="info-text"> Choose your Style </h4>
+		                                <div class="row">
+		                                    <div class="col-sm-10 col-sm-offset-1">
+		                                        <div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio">
+		                                                <input type="radio" name="style" value="images/card/sky.jpg">
+														<img src="@routes.Assets.at("images/card/sky.jpg")" class="icon"/>
+		                                                <h6>SKY</h6>
+		                                            </div>
+		                                        </div>
+		                                        <div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio">
+		                                                <input type="radio" name="style" value="images/card/city.jpg">
+		                                                <img src="@routes.Assets.at("images/card/city.jpg")" class="icon"/>
+		                                                <h6>CITY</h6>
+		                                            </div>
+		                                            
+		                                        </div>
+		                                        <div class="col-sm-4">
+		                                            <div class="choice"  data-toggle="wizard-radio">
+		                                                <input type="radio" name="style" value="images/card/field.png">
+		                                                <img src="@routes.Assets.at("images/card/field.png")" class="icon"/>
+		                                                <h6>FIELD</h6>
+		                                            </div>
+		                                        </div>
+		                                        <div class="col-sm-4">
+		                                            <div class="choice"  data-toggle="wizard-radio">
+		                                                <input type="radio" name="style" value="images/card/work.jpg">
+		                                                <img src="@routes.Assets.at("images/card/work.jpg")" class="icon"/>
+		                                                <h6>WORK</h6>
+		                                            </div>
+		                                        </div>
+		                                        <div class="col-sm-4">
+		                                            <div class="choice"  data-toggle="wizard-radio">
+		                                                <input type="radio" name="style" value="images/card/business.jpg">
+		                                                <img src="@routes.Assets.at("images/card/business.jpg")" class="icon"/>
+		                                                <h6>BUSINESS</h6>
+		                                            </div>
+		                                        </div>
+		                                        <div class="col-sm-4">
+		                                            <div class="choice"  data-toggle="wizard-radio">
+		                                                <input type="radio" name="style" value="images/card/ecommerce.jpg">
+		                                                <img src="@routes.Assets.at("images/card/ecommerce.jpg")" class="icon"/>
+		                                                <h6>ECOMMERCE</h6>
+		                                            </div>
+		                                        </div>
+		                                    </div>
+		                                </div>
                                     </div>
                                     <div class="wizard-footer">
                                         <div class="pull-right">
@@ -393,6 +443,7 @@
         	document.getElementById('account').style.display="block";
         	document.getElementById('social').style.display="none";
         	document.getElementById('address').style.display="none";
+        	document.getElementById('style').style.display="none";
         }
         
         function about(){
@@ -400,6 +451,7 @@
         	document.getElementById('about').style.display="block";
         	document.getElementById('social').style.display="none";
         	document.getElementById('address').style.display="none";
+        	document.getElementById('style').style.display="none";
         }
         
         function social(){
@@ -407,6 +459,7 @@
         	document.getElementById('social').style.display="block";
         	document.getElementById('account').style.display="none";
         	document.getElementById('address').style.display="none";
+        	document.getElementById('style').style.display="none";
         }
         
         function address(){
@@ -414,6 +467,14 @@
         	document.getElementById('address').style.display="block";
         	document.getElementById('social').style.display="none";
         	document.getElementById('account').style.display="none";
+        	document.getElementById('style').style.display="none";
+        }
+        function skin(){
+        	document.getElementById('about').style.display="none";
+        	document.getElementById('address').style.display="none";
+        	document.getElementById('social').style.display="none";
+        	document.getElementById('account').style.display="none";
+        	document.getElementById('style').style.display="block";
         }
     </script>
     <script>

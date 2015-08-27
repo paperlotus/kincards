@@ -289,6 +289,7 @@ public class Application extends Controller {
             	user.website = node.get("row").findPath("website").asText();
             	user.zip = node.get("row").findPath("zip").asText();
             	user.privacy = node.get("row").findPath("privacy").asText();
+            	user.style = node.get("row").findPath("style").asText();
             	userList.add(user);
             }				
 			
@@ -405,6 +406,7 @@ public class Application extends Controller {
             	user.website = node.get("row").findPath("website").asText();
             	user.zip = node.get("row").findPath("zip").asText();
             	user.privacy = node.get("row").findPath("privacy").asText();
+            	user.style = node.get("row").findPath("style").asText();
             	userList.add(user);
             }				
 			

@@ -66,6 +66,11 @@ public class Profile extends Controller{
         String designation = requestData.get("desig");
         String website = requestData.get("website");
         String country = requestData.get("country");
+        String style = requestData.get("style");
+        if(style == null){
+        	style = "sky.jpg";
+        }
+        
         long photoId = 0;
         photoId = upload("profile-pic");
         long companyLogoId = 0;
@@ -77,27 +82,31 @@ public class Profile extends Controller{
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
 	        		+ "n.photoId = \'"+photoId+"\', n.companyLogoId = \'"+companyLogoId+"\', "
-	        		+ "n.country = \'"+country+"\' RETURN n;";
+	        		+ "n.country = \'"+country+"\',"
+	        		+ "n.style = \'"+style+"\' RETURN n;";
         }else if(photoId > 0 && companyLogoId == 0){
         	query = "MATCH (n {email : \'"+email+"\'}) SET n.phone2 = \'"+phone2+"\', n.phone = \'"+phone+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
 	        		+ "n.photoId = \'"+photoId+"\', "
-	        		+ "n.country = \'"+country+"\' RETURN n;";
+	        		+ "n.country = \'"+country+"\', "
+	        		+ "n.style = \'"+style+"\' RETURN n;";
         }else if(companyLogoId > 0 && photoId == 0){
         	query = "MATCH (n {email : \'"+email+"\'}) SET n.phone2 = \'"+phone2+"\', n.phone = \'"+phone+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
 	        		+ " n.companyLogoId = \'"+companyLogoId+"\', "
-	        		+ "n.country = \'"+country+"\' RETURN n;";
+	        		+ "n.country = \'"+country+"\', "
+	        		+ "n.style = \'"+style+"\' RETURN n;";
         }else if(companyLogoId == 0 && photoId == 0){
         	query = "MATCH (n {email : \'"+email+"\'}) SET n.phone2 = \'"+phone2+"\', n.phone = \'"+phone+"\', n.fName = \'"+fName+"\', n.lName = \'"+lName+"\', n.twitter = \'"+twitter+"\', n.facebook = \'"+facebook+"\', "
 	        		+ "n.linkedIn = \'"+linkedin+"\', n.addressLn1 = \'"+addressLn1+"\', n.addressLn2 = \'"+addressLn2+"\', n.city = \'"+city+"\',"
 	        		+ "n.state = \'"+state+"\', n.zip = "+zip+", n.fax = "+fax+", n.companyName = \'"+companyName+"\',"
 	        		+ "n.designation = \'"+designation+"\', n.website = \'"+website+"\', "
-	        		+ "n.country = \'"+country+"\' RETURN n;";
+	        		+ "n.country = \'"+country+"\',"
+	        		+ "n.style = \'"+style+"\' RETURN n;";
         }
         String resp = CreateSimpleGraph.sendTransactionalCypherQuery(query);
         User user = new User();
@@ -265,6 +274,7 @@ public class Profile extends Controller{
             	user.website = node.get("row").findPath("website").asText();
             	user.zip = node.get("row").findPath("zip").asText();
             	user.privacy = node.get("row").findPath("privacy").asText();
+            	user.style = node.get("row").findPath("style").asText();
             	userList.add(user);
             }				
 			
